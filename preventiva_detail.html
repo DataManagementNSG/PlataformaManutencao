@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="display-4 text-center">Atividades</h3>
+
+  <!-- Div para exibir cards -->
+  <div class="row justify-content-center mt-3">
+    {% for atividade in object.atividades.all %}
+    <div class="col-md-4 mb-4">
+      <div class="card mx-auto">
+        <div class="card-body">
+          <h5 class="card-title">{{ atividade.nome }}</h5>
+          <ul class="list-group list-group-flush">
+            {% for tarefa in atividade.tarefas.all %}
+            <li class="list-group-item">{{ tarefa.nome }}</li>
+            {% empty %}
+            <li class="list-group-item">Nenhuma tarefa encontrada.</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <p class="text-center">Nenhuma atividade encontrada.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Botões de Navegação -->
+  <div class="buttons-container mt-3">
+    <a href="{% url 'tecnicos_list' %}" class="btn btn-secondary">
+      <i class="bi bi-arrow-left-circle"></i> Voltar
+    </a>
+    {% if object.status_preventiva %}
+    <a href="{% url 'fechar_preventiva' object.pk %}" class="btn btn-warning">
+      <i class="bi bi-check-circle"></i> Fechar Preventiva
+    </a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

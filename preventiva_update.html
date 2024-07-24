@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <h3 class="display-4 text-center">Novo Responsável</h3>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a href="{% url 'responsavel_detail' pk=responsavel.pk %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+
+{% endblock %}

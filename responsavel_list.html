@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <h3 class="display-4 text-center">Técnicos</h3>
+  <div class="text-end mb-3">
+    <h5><strong>Total Geral de Preventivas:</strong> {{ total_preventivas }}</h5>
+  </div>
+  <div class="row">
+    {% for responsavel in responsaveis|dictsort:"nome" %}
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center">{{ responsavel.nome }}</h5>
+          <p class="card-text"><strong>Email:</strong> {{ responsavel.email }}</p>
+          <p class="card-text"><strong>Centro de Trabalho:</strong> {{ responsavel.centro_trabalho_responsavel }}</p>
+          <p class="card-text"><strong>Especialidade:</strong> {{ responsavel.especialidade }}</p>
+          <div class="text-center">
+            <a href="{% url 'responsavel_detail' pk=responsavel.pk %}" class="btn btn-primary btn-sm">Preventivas</a>
+            <a href="{% url 'solicitacoes_por_tecnico' responsavel.pk %}" class="btn btn-success btn-sm">Cartões PM</a>
+            <a href="{% url 'materiais_por_responsavel' responsavel.pk %}" class="btn btn-info btn-sm">Spare Parts</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-md-12">
+      <p>Nenhum responsável encontrado.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
