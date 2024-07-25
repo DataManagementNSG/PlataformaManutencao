@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <h3 class="display-4 text-center">Fechamento de Cartão de Solicitação</h3>
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title"><strong>Cartão: </strong>{{ solicitacao.id }}</h3>  
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="descricao_trabalho">Descrição do Trabalho:</label>
+          <textarea class="form-control" id="descricao_trabalho" name="descricao_trabalho" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="quem_fechou">Quem Fechou:</label>
+          <input type="text" class="form-control" id="quem_fechou" name="quem_fechou">
+        </div>
+        <div class="mt-3"> <!-- Adicionando margem superior aqui -->
+          <button type="submit" class="btn btn-primary">Concluir Solicitação</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+  <div class="buttons-container mt-3">
+    <a href="{% url 'solicitacao_list' %}" class="btn btn-secondary">Voltar</a>
+  </div>
+</div>
+{% endblock %}

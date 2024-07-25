@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Materiais Utilizados na Ordem
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="display-4 text-center">Materiais Utilizados na Ordem</h3>
+    
+    <ul>
+        {% for material_ordem in materiais_ordem %}
+            <li>{{ material_ordem.material.nome }} - Quantidade: {{ material_ordem.quantidade_utilizada }}</li>
+        {% endfor %}
+    </ul>
+    
+    <div class="buttons-container mt-3">
+        <a href="{% url 'ordem_detail' pk=ordem.pk %}" class="btn btn-primary">Voltar para Detalhes da Ordem</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <h3 class="display-4 text-center">Excluir Ordem</h3>
+  <div class="card">
+    <div class="card-body">
+      <p>Você tem certeza que deseja excluir a ordem "{{ object.titulo }}"?</p>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+        <a href="{% url 'nova_ordem' %}" class="btn btn-secondary">Cancelar</a>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

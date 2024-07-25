@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Alerta de Quantidade Mínima Atingida
+{% endblock %}
+
+{% block content %}
+
+<h1 class="text-center text-danger">Alerta de Quantidade Mínima Atingida</h1>
+
+<p class="text-danger">Prezado(a) {{ material.responsavel }},</p>
+
+<p>Estamos entrando em contato para informar que a quantidade mínima do material com Código SAP <strong>{{ spare.codigo_sap }}</strong> foi atingida.</p>
+
+<p>Por favor, realize a Requisição de Compra (RC) o mais breve possível para evitar o desabastecimento.</p>
+
+<p>Se precisar de assistência adicional, não hesite em nos contatar.</p>
+
+<p>Atenciosamente,<br>Equipe de Gestão da Manutenção</p>
+
+{% endblock %}

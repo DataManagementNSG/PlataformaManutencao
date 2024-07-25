@@ -1,0 +1,19 @@
+{% load static %}
+
+<footer class="footer mt-auto py-3 text-center">
+  <div class="container">
+    {% if user_sector == 'Temperado' %}
+    <div class="row justify-content-center align-items-center">
+      <div class="col-md-auto">
+        <img src="{% static 'LOGO_APBT.png' %}" alt="Descrição da imagem 1">
+      </div>
+      <div class="col-md-auto">
+        <span class="text-muted">© 2024 Manutenção Temperado</span>
+      </div>
+      <div class="col-md-auto">
+        <img src="{% static 'LOGO_BDR.png' %}" alt="LOGO_BDR">
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</footer>

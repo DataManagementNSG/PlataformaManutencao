@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Materiais Sem Estoque
+{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+  <h3 class="display-4 text-center">Materiais sem Estoque</h3>
+</div>
+
+{% if esgotados %}
+  <div class="row">
+    {% for spare in esgotados %}
+      <div class="col-md-4 mb-4">
+        <div class="card bg-danger">
+          <div class="card-body">
+            <h5 class="card-title">{{ spare.nome }}</h5>
+            <p class="card-text">Código SAP: {{ spare.codigo_sap }}</p>
+            <p class="card-text">Descrição: {{ spare.descricao }}</p>
+            <p class="card-text">Responsável: {{ spare.responsavel }}</p>
+            <p class="card-text">Localização: {{ spare.localizacao }}</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    <form>
+      <a href="{% url 'spare_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+    
+  </div>
+{% else %}
+<p class="text-center">Não há materiais sem estoque no momento.</p>
+<a href="{% url 'spare_list' %}" class="btn btn-secondary">Voltar</a>          
+{% endif %}
+
+{% endblock %}

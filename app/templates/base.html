@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-bs-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
+
+  {% load static %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Inclua o CSS do SweetAlert2 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+  <!-- Inclua o JavaScript do SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+  {% if user.is_authenticated %}
+    {% include 'components/_header.html' %}
+  {% endif %}
+
+  <div class="container-fluid">
+    <div class="col py-3">
+      <div class="container mt-4">
+        <main>
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+  </div>
+  
+  {% include 'components/_footer.html' %}
+
+  <!-- Script para exibir mensagens como popups -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      {% if messages %}
+        {% for message in messages %}
+          Swal.fire({
+            icon: '{{ message.tags }}',
+            title: '{{ message|escapejs }}'
+          });
+        {% endfor %}
+      {% endif %}
+    });
+  </script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>

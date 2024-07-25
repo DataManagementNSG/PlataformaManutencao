@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="display-4 text-center">Confirmar Deleção</h3>
+
+  <div class="card">
+    <div class="card-body">
+      <p>Você tem certeza que deseja deletar "{{ object.nome }}"?</p>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" id="delete-button">Deletar</button>
+        <a href="{% url 'tecnicos_list' %}" class="btn btn-secondary">Cancelar</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const deleteButton = document.getElementById('delete-button');
+  const form = deleteButton.closest('form');
+
+  deleteButton.addEventListener('click', function(event) {
+    event.preventDefault();
+
+    Swal.fire({
+      title: 'Confirmação Necessária',
+      text: 'Você tem certeza que deseja deletar este técnico?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sim, deletar!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        form.submit();
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

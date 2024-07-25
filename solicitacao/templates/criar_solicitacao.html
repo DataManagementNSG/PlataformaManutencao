@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastrar Solicitação{% endblock %}
+
+{% block extra_head %}
+  {{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="display-4 text-center">Cadastrar Solicitação</h3>
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Criar Solicitação</button>
+                <a href="{% url 'solicitacao_list' %}" class="btn btn-secondary">Cancelar</a>
+                {% if form.errors %}
+                    <div class="alert alert-danger mt-3" role="alert">
+                        Por favor, corrija os seguintes erros:
+                        <ul>
+                            {% for field, error_list in form.errors.items %}
+                                {% for error in error_list %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

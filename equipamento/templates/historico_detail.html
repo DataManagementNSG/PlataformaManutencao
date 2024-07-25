@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4 d-flex justify-content-center">
+    <div class="text-center">
+        <h3 class="display-4">Histórico do Componente: {{ subcomponente.nome }}</h3>
+        <div class="card">
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for historico in historico_subcomponente %}
+                        <tr>
+                            <td>{{ historico.data }}</td>
+                            <td>{{ historico.descricao }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2">Nenhum histórico encontrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

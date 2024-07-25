@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="display-4 text-center">Criar Histórico de Subcomponente</h3>
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="subcomponente" value="{{ subcomponente.pk }}">
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Criar Histórico</button>
+                <a href="{% url 'equipamento_list' %}" class="btn btn-secondary">Voltar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+ 

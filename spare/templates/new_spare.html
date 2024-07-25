@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="display-4 text-center">Cadastrar Spare</h3>
+    <div class="card">
+        <div class="card-body">
+            <form id="spare-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}               
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+                <a href="{% url 'spare_list' %}" class="btn btn-secondary">Cancelar</a>            
+                
+                {% if form.errors %}
+                    <div class="alert alert-danger mt-3" role="alert">
+                        <strong>Por favor, corrija os seguintes erros:</strong>
+                        <ul>
+                            {% for field, error_list in form.errors.items %}
+                                {% for error in error_list %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}                
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Script para SweetAlert2 -->
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.getElementById('spare-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Você tem certeza?',
+            text: "Você está prestes a cadastrar um novo produto.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, cadastrar!',
+            cancelButtonText: 'Não, cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Exibe a mensagem de sucesso após o envio do formulário
+                Swal.fire({
+                    title: 'Cadastrado!',
+                    text: 'O produto foi cadastrado com sucesso.',
+                    icon: 'success',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Após clicar em OK, submete o formulário
+                    event.target.submit();
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

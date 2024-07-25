@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Cadastrar Ordem
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="display-4 text-center">Materiais Utilizados</h3>
+    <div class="card">
+        <div class="card-body">
+            <h1>Selecionar Materiais</h1>
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a href="{% url 'ordem_list' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
