@@ -15,7 +15,7 @@ from preventiva.views import PreventivaFechadaListView, PreventivaDetailView, Pr
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('registro/', registro_view, name='registro'),
-    path('login/', login_view, name='login'),
+    path('', login_view, name='login'),
     path('logout/', logout_view, name = 'logout'),
     path('', include('tecnicos.urls')),
     path('', include('spare.urls')),
