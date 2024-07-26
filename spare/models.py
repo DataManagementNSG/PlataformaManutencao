@@ -27,15 +27,18 @@ class Unidade(models.Model):
         return self.nome
 
 
-class Material(models.Model):
-    CRITICIDADE_CHOICES = [
-        ('Baixa', 'Baixa'),
-        ('Média', 'Média'),
-        ('Alta', 'Alta'),
-    ]
+class Item(models.Model):
+    id = models.BigAutoField(primary_key=True)
     nome = models.CharField(max_length=100, blank=True, null=True)
     codigo_sap = models.CharField(max_length=20, blank=True, null=True)
     descricao = models.TextField(blank=True, null=True)
+
+class Material(models.Model):
+    CRITICIDADE_CHOICES = [
+        ('C', 'C'),
+        ('B', 'B'),
+        ('A', 'A'),
+    ]
     quantidade = models.IntegerField(blank=True, null=True)
     quantidade_minima = models.IntegerField(blank=True, null=True)
     quantidade_maxima = models.IntegerField(blank=True, null=True)
@@ -55,11 +58,7 @@ class Material(models.Model):
     criado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='materiais_criados')
     alterado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='materiais_alterados')
     deletado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='materiais_deletados')
-
-    def clean(self):
-        # Verifica se o responsável pertence ao mesmo setor
-        if self.responsavel and self.responsavel.setor != self.setor:
-            raise ValidationError('O responsável pelo material deve pertencer ao mesmo setor do material.')
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=False)
 
     def save(self, *args, **kwargs):
         if not self.pk and 'request' in kwargs:
