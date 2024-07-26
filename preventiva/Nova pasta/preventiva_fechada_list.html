@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Relatório de Preventivas Fechadas
+{% endblock %}
+ 
+{% block content %}
+<div class="mb-4">
+  <h3 class="display-4 text-center">Relatório de Preventivas Fechadas</h3>
+</div>
+
+<div class="row mb-3">
+  <div class="col-md-12">
+    <p class="text-center">Total de Preventivas Fechadas: {{ preventivas|length }}</p>
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col-md-12">
+    <table class="table table-striped table-bordered table-hover w-100">
+      <thead class="thead-dark">
+        <tr>
+          <th>Ordem</th>
+          <th>Texto Breve</th>
+          <th>Data de Início</th> <!-- Nova coluna -->
+          <th>Data de Fim</th> <!-- Nova coluna -->
+          <th>Execução</th> <!-- Nova coluna -->
+          <th>Comentários</th> <!-- Nova coluna -->
+          <th>Responsável</th>
+          <th>Lançado no SAP</th> <!-- Título da nova coluna -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for preventiva in preventivas %}
+        <tr>
+          <!-- Colunas existentes -->
+          <td>{{ preventiva.ordem }}</td>
+          <td>{{ preventiva.texto_breve }}</td>
+          <td>{{ preventiva.data_inicio|default:"Não informada" }}</td>
+          <td>{{ preventiva.data_fim|default:"Não informada" }}</td>
+          <td>{{ preventiva.tempo_execucao|default:"Não informado" }}</td>
+          <td>{{ preventiva.comentarios|default:"Sem comentários" }}</td>
+          <td>{{ preventiva.centro_trabalho_responsavel }}</td>
+          
+          <!-- Checkbox para indicar se foi lançado no SAP -->
+          <td class="text-center align-middle">
+            <input type="checkbox" id="lancado_no_sap_{{ preventiva.pk }}" name="lancado_no_sap"
+                   {% if preventiva.lancado_no_sap %}checked{% endif %}>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="9">Nenhuma preventiva fechada encontrada.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<a href="{% url 'relatorio_excel' %}" class="btn btn-success">Gerar Relatório em Excel</a>
+
+<a href="{% url 'tecnicos_list' %}" class="btn btn-secondary">Voltar</a>
+
+<script>
+  $(document).ready(function() {
+    $('input[name="lancado_no_sap"]').change(function() {
+      var preventivaId = $(this).attr('id').split('_').pop();
+      var isChecked = $(this).prop('checked');
+      
+      $.ajax({
+        url: '/atualizar-status-sap/',
+        method: 'POST',
+        data: {
+          'preventiva_id': preventivaId,
+          'isChecked': isChecked ? 'true' : 'false',
+          'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+          // Atualizar a interface conforme necessário
+          console.log('Status atualizado com sucesso.');
+        },
+        error: function(error) {
+          console.error('Erro ao atualizar status:', error);
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

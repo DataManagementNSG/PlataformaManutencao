@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <h3 class="display-4 text-center">Detalhes do Responsável</h3>
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title"><strong>{{ object.nome }}</strong></h3>  
+      <p class="card-text"><strong>Email:</strong> {{ object.email }}</p>
+      <p class="card-text"><strong>Posto de Trabalho:</strong> {{ object.posto_trabalho }}</p>
+      <p class="card-text"><strong>Especialidade:</strong> {{ object.especialidade }}</p>
+    </div>
+  </div>
+
+  <div class="buttons-container mt-3">
+  </div>
+</div>
+
+{% endblock %}
