@@ -2,30 +2,24 @@ from django.contrib.auth.models import User
 from django.db import models
 from accounts.models import Setor
 from tecnicos.models import Tecnicos
-from django.utils import timezone
-from django.core.exceptions import ValidationError
- 
-# Categorias dos materiais
+
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
 
     def __str__(self):
         return self.nome
 
-# Criticidade dos materiais
 class Criticidade(models.Model):
     nome = models.CharField(max_length=100)
 
     def __str__(self):
         return self.nome
 
-# Cadastrar o tipo de material: Ex: peça, metros e etc.
 class Unidade(models.Model):
     nome = models.CharField(max_length=100)
 
     def __str__(self):
         return self.nome
-
 
 class Item(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -33,12 +27,17 @@ class Item(models.Model):
     codigo_sap = models.CharField(max_length=20, blank=True, null=True)
     descricao = models.TextField(blank=True, null=True)
 
+    def __str__(self):
+        return self.nome
+
 class Material(models.Model):
     CRITICIDADE_CHOICES = [
         ('C', 'C'),
         ('B', 'B'),
         ('A', 'A'),
     ]
+    codigo_sap = models.CharField(max_length=9, blank=True, null=True)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=False, default=1)
     quantidade = models.IntegerField(blank=True, null=True)
     quantidade_minima = models.IntegerField(blank=True, null=True)
     quantidade_maxima = models.IntegerField(blank=True, null=True)
@@ -58,31 +57,30 @@ class Material(models.Model):
     criado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='materiais_criados')
     alterado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='materiais_alterados')
     deletado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='materiais_deletados')
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=False)
 
     def save(self, *args, **kwargs):
-        if not self.pk and 'request' in kwargs:
-            self.criado_por = kwargs['request'].user
-        elif 'request' in kwargs:
-            self.alterado_por = kwargs.pop('request').user
+        if not self.pk:  # Quando o objeto é novo
+            if 'request' in kwargs:
+                self.criado_por = kwargs.pop('request').user
+        else:
+            if 'request' in kwargs:
+                self.alterado_por = kwargs.pop('request').user
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         if 'request' in kwargs:
-            self.deletado_por = kwargs['request'].user
+            self.deletado_por = kwargs.pop('request').user
             self.save()
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return self.nome
+        return self.item.nome
 
-    # Cálculo do valor total do item em estoque.
     def valor_total(self):
         if self.quantidade is not None and self.valor_unitario is not None:
             return self.quantidade * self.valor_unitario
         return None
 
-    # Cálculo de quantidade próxima ao nível mínimo.
     def status_quantidade(self):
         if self.quantidade is not None and self.quantidade_minima is not None and self.margem_proximo_minimo is not None:
             if self.quantidade <= self.quantidade_minima:

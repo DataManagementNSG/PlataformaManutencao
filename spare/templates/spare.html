@@ -12,21 +12,29 @@
 
 <!-- Botões para Interações -->
 <div class="row mb-3">
-  <div class="col-md-6">
-    <a href="{% url 'new_spare' %}" class="btn btn-primary">
-      <i class="bi bi-plus"></i> Novo Item
-    </a>
-    <a href="{% url 'inflow_create' %}" class="btn btn-success">
-      <i class="bi bi-arrow-up-circle"></i> Reabastecer
-    </a>
-    <a href="{% url 'outflow_create' %}" class="btn btn-warning">
-      <i class="bi bi-arrow-down-circle"></i> Registrar Saída
-    </a>
-    <a href="{% url 'spare_esgotado' %}" class="btn btn-danger">
-      <i class="bi bi-x-circle"></i> Sem Estoque
-    </a>
+  <div class="col-md-12">
+    <div class="btn-group" role="group">
+      <a href="{% url 'new_spare' %}" class="btn btn-primary me-2">
+        <i class="bi bi-plus"></i> Novo Item
+      </a>
+      <a href="{% url 'inflow_create' %}" class="btn btn-success me-2">
+        <i class="bi bi-arrow-up-circle"></i> Reabastecer
+      </a>
+      <a href="{% url 'outflow_create' %}" class="btn btn-warning me-2">
+        <i class="bi bi-arrow-down-circle"></i> Registrar Saída
+      </a>
+      <a href="{% url 'spare_esgotado' %}" class="btn btn-danger me-2">
+        <i class="bi bi-x-circle"></i> Sem Estoque
+      </a>
+      <!-- Novo botão de Importação -->
+      <a href="{% url 'import_items' %}" class="btn btn-info">
+        <i class="bi bi-upload"></i> Importar Itens
+      </a>
+    </div>
   </div>
 </div>
+
+
 
 <!-- Filtros -->
 <div class="row mb-3">
@@ -76,24 +84,24 @@
       {% if materials %}
         {% for material in materials %}
           <tr>
-            <td><a href="{% url 'spare_detail' material.pk %}" style="text-decoration: none; color: inherit;">{{ material.nome }}</a></td>
+            <td><a href="{% url 'spare_detail' material.pk %}" style="text-decoration: none; color: inherit;">{{ material.item }}</a></td>
             <td class="text-center">{{ material.codigo_sap }}</td>
             <td class="text-center {% if material.status_quantidade == 'vermelho' %}text-danger{% elif material.status_quantidade == 'amarelo' %}text-warning{% else %}text-success{% endif %}">
               <strong>{{ material.quantidade }}</strong>
             </td>                              
             <td>{{ material.categoria }}</td>
             <td class="text-center">
-              {% if material.criticidade == "Baixa" %}
+              {% if material.criticidade == "C" %}
                 <span class="badge bg-success">
-                  <i class="bi bi-check-circle-fill"></i> <span class="ms-2">Baixa</span>
+                  <i class="bi bi-check-circle-fill"></i> <span class="ms-2">C</span>
                 </span>
-              {% elif material.criticidade == "Média" %}
+              {% elif material.criticidade == "B" %}
                 <span class="badge bg-warning">
-                  <i class="bi bi-exclamation-circle-fill"></i> <span class="ms-2">Média</span>
+                  <i class="bi bi-exclamation-circle-fill"></i> <span class="ms-2">B</span>
                 </span>
-              {% elif material.criticidade == "Alta" %}
+              {% elif material.criticidade == "A" %}
                 <span class="badge bg-danger">
-                  <i class="bi bi-exclamation-triangle-fill"></i> <span class="ms-2">Alta</span>
+                  <i class="bi bi-exclamation-triangle-fill"></i> <span class="ms-2">A</span>
                 </span>
               {% endif %}
             </td>

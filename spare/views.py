@@ -1,5 +1,5 @@
 from spare.models import Material, Categoria
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from spare.forms import MaterialModelForm
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView, View
@@ -8,6 +8,11 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from .utils import generate_barcode
 from accounts.models import Usuario
+from .forms import UploadExcelForm
+from .models import Item
+import pandas as pd
+from django.http import JsonResponse
+from django.contrib import messages
 
 class MaterialListView(LoginRequiredMixin, ListView):
     model = Material
@@ -18,14 +23,14 @@ class MaterialListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         usuario = get_object_or_404(Usuario, user=user)
-        materials = Material.objects.filter(setor=usuario.setor).order_by('nome')
+        materials = Material.objects.filter(setor=usuario.setor).order_by('item__nome')  # Ajustado para 'item__nome'
 
-        search_nome = self.request.GET.get('nome')
+        search_item = self.request.GET.get('item')
         search_codigo_sap = self.request.GET.get('codigo_sap')
         search_categoria = self.request.GET.get('categoria')
 
-        if search_nome:
-            materials = materials.filter(nome__icontains=search_nome)
+        if search_item:
+            materials = materials.filter(item__nome__icontains=search_item)
         if search_codigo_sap:
             materials = materials.filter(codigo_sap__icontains=search_codigo_sap)
         if search_categoria:
@@ -37,11 +42,11 @@ class MaterialListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['categorias'] = Categoria.objects.all()
 
-        context['search_nome'] = self.request.GET.get('nome', '')
+        context['search_item'] = self.request.GET.get('item', '')
         context['search_codigo_sap'] = self.request.GET.get('codigo_sap', '')
         context['search_categoria'] = self.request.GET.get('categoria', '')
 
-        self.request.session['search_nome'] = context['search_nome']
+        self.request.session['search_item'] = context['search_item']
         self.request.session['search_codigo_sap'] = context['search_codigo_sap']
         self.request.session['search_categoria'] = context['search_categoria']
         self.request.session['page_number'] = self.request.GET.get('page', 1)
@@ -57,6 +62,32 @@ class MaterialListView(LoginRequiredMixin, ListView):
 
         context['materials'] = materials_paginados
         return context
+    
+def import_items_from_excel(request):
+    if request.method == 'POST':
+        form = UploadExcelForm(request.POST, request.FILES)
+        if form.is_valid():
+            excel_file = request.FILES['excel_file']
+            try:
+                # Ler o arquivo Excel
+                df = pd.read_excel(excel_file)
+
+                # Importar dados para o modelo Item
+                for _, row in df.iterrows():
+                    Item.objects.create(
+                        nome=row.get('nome'),
+                        codigo_sap=row.get('codigo_sap'),
+                        descricao=row.get('descricao')
+                    )
+
+                messages.success(request, 'Itens importados com sucesso!')
+                return redirect('item_list')  # Redirecionar para uma lista de itens ou outra página
+            except Exception as e:
+                messages.error(request, f'Ocorreu um erro ao importar o arquivo: {e}')
+    else:
+        form = UploadExcelForm()
+
+    return render(request, 'import_items.html', {'form': form})
 
 class NewMaterialCreateView(LoginRequiredMixin, CreateView):
     model = Material
@@ -65,7 +96,7 @@ class NewMaterialCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('spare_list')
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
+        kwargs = super().get_form_kwargs()  # Correto
         kwargs['request'] = self.request
         return kwargs
 
@@ -77,7 +108,7 @@ class NewMaterialCreateView(LoginRequiredMixin, CreateView):
         form.instance.criado_por = self.request.user
         form.instance.user = self.request.user
 
-        response = super().form_valid(form)
+        response = super().form_valid(form)  # Correto
         material = self.object
 
         if material.codigo_sap:
@@ -88,6 +119,21 @@ class NewMaterialCreateView(LoginRequiredMixin, CreateView):
             return HttpResponse("Material não possui código SAP", status=400)
 
         return response
+
+def get_item_by_codigo_sap(request):
+    codigo_sap = request.GET.get('codigo_sap', None)
+    data = {}
+    if codigo_sap:
+        try:
+            item = Item.objects.get(codigo_sap=codigo_sap)
+            data = {
+                'id': item.id,
+                'nome': item.nome,
+            }
+        except Item.DoesNotExist:
+            data = {'error': 'Item não encontrado'}
+    return JsonResponse(data)
+
 
 class MaterialDetailView(LoginRequiredMixin, DetailView):
     model = Material
