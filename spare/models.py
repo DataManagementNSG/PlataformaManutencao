@@ -28,7 +28,7 @@ class Item(models.Model):
     descricao = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.nome
+        return self.nome if self.nome else "Sem Nome"
 
 class Material(models.Model):
     CRITICIDADE_CHOICES = [

@@ -69,19 +69,47 @@ def import_items_from_excel(request):
         if form.is_valid():
             excel_file = request.FILES['excel_file']
             try:
+                # Verifique se o arquivo é um Excel válido
+                if not excel_file.name.endswith('.xlsx') and not excel_file.name.endswith('.xls'):
+                    messages.error(request, 'O arquivo enviado não é um arquivo Excel válido.')
+                    return redirect('import_items')
+
                 # Ler o arquivo Excel
                 df = pd.read_excel(excel_file)
 
+                # Verificar se as colunas necessárias estão presentes
+                required_columns = {'nome', 'codigo_sap', 'descricao'}
+                if not required_columns.issubset(df.columns):
+                    messages.error(request, 'O arquivo Excel deve conter as colunas: nome, codigo_sap, descricao.')
+                    return redirect('import_items')
+
+                imported_count = 0
+                updated_count = 0
+
                 # Importar dados para o modelo Item
                 for _, row in df.iterrows():
-                    Item.objects.create(
-                        nome=row.get('nome'),
-                        codigo_sap=row.get('codigo_sap'),
-                        descricao=row.get('descricao')
+                    codigo_sap = row['codigo_sap']
+                    nome = row['nome']
+                    descricao = row['descricao']
+
+                    # Verificar se o item já existe
+                    item, created = Item.objects.get_or_create(
+                        codigo_sap=codigo_sap,
+                        defaults={'nome': nome, 'descricao': descricao}
                     )
 
-                messages.success(request, 'Itens importados com sucesso!')
-                return redirect('item_list')  # Redirecionar para uma lista de itens ou outra página
+                    if not created:
+                        # Verificar se há modificações
+                        if item.nome != nome or item.descricao != descricao:
+                            item.nome = nome
+                            item.descricao = descricao
+                            item.save()
+                            updated_count += 1
+                    else:
+                        imported_count += 1
+
+                messages.success(request, f'{imported_count} itens importados e {updated_count} itens atualizados com sucesso!')
+                return redirect('spare_list')  # Redirecionar para uma lista de itens ou outra página
             except Exception as e:
                 messages.error(request, f'Ocorreu um erro ao importar o arquivo: {e}')
     else:
