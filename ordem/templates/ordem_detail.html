@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <h3 class="display-4 text-center">Detalhes da Ordem</h3>
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title"><strong>{{ object.titulo }}</strong></h3>  
+      <p class="card-text"><strong>Descrição:</strong> {{ object.descricao }}</p>
+      <p class="card-text"><strong>Status:</strong> {{ object.status }}</p>
+      <p class="card-text"><strong>Prioridade:</strong> {{ object.prioridade }}</p>
+      <p class="card-text"><strong>Falha:</strong> {{ object.falha }}</p>
+      <p class="card-text"><strong>Equipamento:</strong> {{ object.equipamento }}</p>
+      <p class="card-text"><strong>Responsável:</strong> {{ object.responsavel }}</p>
+      {% if object.arquivo %}
+        <a href="{{ object.arquivo.url }}" class="btn btn-primary">Download Arquivo</a>
+      {% else %}
+        <p>Nenhum arquivo disponível</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Lista de Materiais Utilizados -->
+  <div class="mt-4">
+    <h4 class="mb-3">Materiais Utilizados:</h4>
+    <ul class="list-group">
+      {% for material_ordem in object.materialordem_set.all %}
+        <li class="list-group-item">
+          <strong>{{ material_ordem.material.nome }}</strong> - Quantidade Utilizada: {{ material_ordem.quantidade_utilizada }}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  
+  <div class="buttons-container mt-3">
+    <a href="{% url 'ordem_update' pk=object.pk %}" class="btn btn-primary">Editar</a>
+    <a href="{% url 'ordem_delete' pk=object.pk %}" class="btn btn-danger">Excluir</a>
+    <a href="{% url 'ordem_list' %}" class="btn btn-secondary">Cancelar</a>
+    <a href="{% url 'nova_material_ordem' ordem_pk=object.pk %}" class="btn btn-success">Adicionar Material</a>
+    {% if object.status.nome != 'Concluído' %}
+      <a href="{% url 'fechar_ordem' pk=object.pk %}" class="btn btn-warning">Fechar</a>
+    {% endif %}
+  </div>
+{% endblock %}

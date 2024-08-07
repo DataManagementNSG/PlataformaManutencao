@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <h3 class="display-4 text-center">Detalhes da Solicitação</h3>
+  <div class="container-fluid mt-4 border border-gray rounded shadow-lg p-4 mb-4">
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title"><strong>Cartão: </strong>{{ solicitacao.id }}</h3>  
+      <p class="card-text"><strong>Data de Criação:</strong> {{ solicitacao.data_criacao|date:"d/m/Y H:i" }}</p>
+      <p class="card-text"><strong>Data Limite:</strong> {{ solicitacao.calcular_data_limite|date:"d/m/Y H:i" }}</p>
+      <p class="card-text"><strong>Autor:</strong> {{ solicitacao.autor }}</p>
+      <p class="card-text"><strong>Linha:</strong> {{ solicitacao.linha }}</p>
+      <p class="card-text"><strong>Área:</strong> {{ solicitacao.area }}</p>
+      <p class="card-text"><strong>Criticidade:</strong> {% if solicitacao.criticidade == 'Alta' %}<span class="text-danger">{% endif %}{{ solicitacao.criticidade }}{% if solicitacao.criticidade == 'Alta' %}</span>{% endif %}</p>
+      <p class="card-text"><strong>Equipamento:</strong> {{ solicitacao.equipamento }}</p> 
+      <p class="card-text"><strong>Componente:</strong> {{ solicitacao.componente }}</p>
+      <p class="card-text"><strong>Turno:</strong> {{ solicitacao.turno }}</p>
+      <p class="card-text"><strong>Opções do Checklist:</strong></p>
+      <ul>
+        {% for opcao in solicitacao.opcoes_checklist.all %}
+          <li>{{ opcao.letra }} - {{ opcao.descricao }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  
+  <div class="buttons-container mt-3">
+    <a href="{% url 'solicitacao_list' %}" class="btn btn-secondary">Voltar</a>
+    <a href="{% url 'editar_solicitacao' solicitacao.id %}" class="btn btn-primary">Editar</a>
+    <a href="{% url 'excluir_solicitacao' solicitacao.id %}" class="btn btn-danger">Excluir</a>
+    <a href="{% url 'fechar_solicitacao' solicitacao.id %}" class="btn btn-success">Fechar Cartão</a>
+  </div>
+</div>
+</div>
+
+{% endblock %}

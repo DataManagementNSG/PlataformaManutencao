@@ -1,0 +1,31 @@
+{% load static %}
+
+<footer class="footer mt-auto py-3 text-center">
+  <div class="container">
+    {% if user_sector == 'Temperado' %}
+    <div class="row justify-content-center align-items-center">
+      <div class="col-md-auto">
+        <img src="{% static 'LOGO_APBT_Temperado.png' %}" alt="Descrição da imagem Temperado">
+      </div>
+      <div class="col-md-auto">
+        <span class="text-muted">© 2024 Manutenção Temperado</span>
+      </div>
+      <div class="col-md-auto">
+        <img src="{% static 'LOGO_BDR_Temperado.png' %}" alt="LOGO_BDR Temperado">
+      </div>
+    </div>
+    {% elif user_sector == '2DFB' %}
+    <div class="row justify-content-center align-items-center">
+      <div class="col-md-auto">
+        <img src="{% static 'LOGO_APBT_2DFB.png' %}" alt="Descrição da imagem 2DFB">
+      </div>
+      <div class="col-md-auto">
+        <span class="text-muted">© 2024 Manutenção 2DFB</span>
+      </div>
+      <div class="col-md-auto">
+        <img src="{% static 'LOGO_BDR_2DFB.png' %}" alt="LOGO_BDR 2DFB">
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</footer>

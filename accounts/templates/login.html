@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<div class="mb-4 text-center">
+  <img src="{% static 'nsg.png' %}" alt="Logo" class="img-fluid" style="max-width: 200px;">
+</div>
+<div class="mb-4 text-center">
+  <h3 class="display-4">Gestão da Manutenção</h3>
+</div>
+
+<div class="container mt-5">
+  <div class="row justify-content-center align-items-center">
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-4">Login</h5>
+          <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="username" class="form-label">Usuário</label>
+              <input type="text" class="form-control" id="username" name="username" required autofocus aria-label="Usuário" autocomplete="username">
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Senha</label>
+              <input type="password" class="form-control" id="password" name="password" required aria-label="Senha" autocomplete="current-password">
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary">Entrar</button>
+            </div>
+            <div class="bottom-text mt-3">
+              Não possui uma conta? <a href="{% url 'registro' %}">Cadastre-se</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    {% if messages %}
+      {% for message in messages %}
+        Swal.fire({
+          icon: '{{ message.tags }}',
+          title: '{{ message|escapejs }}',
+          showConfirmButton: false,
+          timer: 3000
+        });
+      {% endfor %}
+    {% endif %}
+  });
+</script>
+{% endblock %}

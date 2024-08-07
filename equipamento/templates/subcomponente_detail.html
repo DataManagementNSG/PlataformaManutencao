@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Detalhes do Componente
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <h3 class="display-4 text-center">Detalhes do Componente</h3>
+</div>
+
+<div class="row">
+  <div class="col-md-8 mx-auto"> <!-- Aumentando a largura para col-md-8 -->
+    
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title"><strong>{{ object.nome }}</strong></h3>  
+        <p class="card-text"><strong>Descrição:</strong> {{ object.descricao }}</p>
+        <p class="card-text"><strong>Equipamento:</strong> {{ object.equipamento }}</p>
+        <p class="card-text"><strong>Linha:</strong> {{ object.linha }}</p>
+        {% if object.foto %}
+        <img src="{{ material.foto.url }}" alt="{{ material.nome }}">
+        {% else %}
+        <p>Nenhuma imagem disponível</p>
+        {% endif %}
+        <!-- Adicione outros campos específicos do subcomponente aqui -->
+
+        <!-- Botão para adicionar histórico -->
+        <a href="{% url 'historico_create' pk=object.pk %}" class="btn btn-success">Adicionar Histórico</a>
+      </div>
+    </div>
+    <div class="buttons-container mt-3">
+      <a href="{% url 'subcomponente_update' pk=object.pk %}" class="btn btn-primary">Editar</a>
+      <a href="{% url 'subcomponente_delete' pk=object.pk %}" class="btn btn-danger">Deletar</a>
+      <a href="{% url 'equipamento_detail' pk=object.equipamento.pk %}" class="btn btn-secondary">Voltar para Equipamento</a>
+      <a href="{% url 'historico_subcomponente_list' pk=object.pk %}" class="btn btn-info">Ver Histórico</a>
+    </div>
+  </div>
+</div>
+
+</div>
+{% endblock %}

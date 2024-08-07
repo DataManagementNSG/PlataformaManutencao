@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Equipamentos
+{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+  <h3 class="display-4 text-center">Equipamentos</h3>
+</div>
+<div class="container-fluid mt-4 border border-gray rounded shadow-lg p-4 mb-4">
+<div class="row mb-3">
+  <div class="col-md-7">
+    <form method="GET" action="{% url 'equipamento_list' %}">
+      <div class="input-group">
+        <input type="text" class="form-control" name="nome" placeholder="Nome" value="{{ request.GET.nome }}">
+        <input type="text" class="form-control" name="descricao" placeholder="Descrição" value="{{ request.GET.descricao }}"> 
+        <select class="form-select" name="linha">
+          <option value="" {% if not request.GET.linha %} selected {% endif %}>Linhas</option>
+          {% for linha in linhas %}
+              <option value="{{ linha }}" {% if request.GET.linha == linha %} selected {% endif %}>{{ linha }}</option>
+          {% endfor %}
+        </select>
+        <select class="form-select" name="area">
+          <option value="" {% if not request.GET.area %} selected {% endif %}>Áreas</option>
+          {% for area in areas %}
+              <option value="{{ area }}" {% if request.GET.area == area %} selected {% endif %}>{{ area }}</option>
+          {% endfor %}
+        </select>
+        <select class="form-select" name="criticidade">
+          <option value="" {% if not request.GET.criticidade %} selected {% endif %}>Criticidades</option>
+          {% for criticidade in criticidades %}
+              <option value="{{ criticidade }}" {% if request.GET.criticidade == criticidade %} selected {% endif %}>{{ criticidade }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-5">
+    <a href="{% url 'equipamento_create' %}" class="btn btn-primary">
+      <i class="bi bi-plus"></i> Novo Equipamento
+    </a>
+  </div>
+</div>
+
+<div class="row">
+  {% if equipamentos %}
+    {% for equipamento in equipamentos %}
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card">
+          <div class="card-header bg-primary text-white text-center">
+            <a href="{% url 'equipamento_detail' equipamento.pk %}" style="text-decoration: none; color: inherit;">
+              <strong>{{ equipamento.nome }}</strong>
+            </a>
+          </div>          
+          <div class="card-body">
+            <p class="card-text"><strong>Linha:</strong> {{ equipamento.linha }}</p>
+            <p class="card-text"><strong>Área:</strong> {{ equipamento.area }}</p>
+            <p class="card-text"><strong>Criticidade:</strong> {{ equipamento.criticidade }}</p>
+            <p class="card-text"><strong>Técnico Mecânico:</strong> {{ equipamento.responsavel_mecanico.nome }}</p>
+            <p class="card-text"><strong>Técnico Eletrônico:</strong> {{ equipamento.responsavel_eletronico.nome }}</p>
+          </div>
+        </div>
+      </div>
+      {% if forloop.counter|divisibleby:3 and not forloop.last %}
+        </div><div class="row">
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <p class="card-text text-center">Nenhum equipamento encontrado.</p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+</div>
+
+{% include 'components/_pagination.html' %}
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="display-4 text-center">Detalhes do Equipamento</h3>
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title"><strong>{{ object.nome }}</strong></h3>  
+          <p class="card-text"><strong>Linha:</strong> {{ object.linha }}</p>
+          <p class="card-text"><strong>Área:</strong> {{ object.area }}</p>
+          <p class="card-text"><strong>Criticidade:</strong> {{ object.criticidade }}</p>
+          <p class="card-text"><strong>Responsável Mecânico:</strong> {{ object.responsavel_mecanico.nome }}</p>
+          <p class="card-text"><strong>Responsável Eletrônico:</strong> {{ object.responsavel_eletronico.nome }}</p>
+          {% if object.arquivo %}
+            <p><strong>Arquivo:</strong> <a href="{{ object.arquivo.url }}">{{ object.arquivo.name }}</a></p>
+          {% else %}
+            <p>Nenhum arquivo disponível</p>
+          {% endif %}
+        </div>
+      </div>
+
+
+      <div class="buttons-container mt-3">
+        <a href="{% url 'equipamento_update' pk=object.pk %}" class="btn btn-primary">Editar</a>
+        <a href="{% url 'equipamento_delete' pk=object.pk %}" class="btn btn-danger">Deletar</a>
+        <a href="{% url 'equipamento_list' %}" class="btn btn-secondary">Voltar</a>
+        <a href="{% url 'subcomponente_create' pk=object.pk %}" class="btn btn-success">Cadastrar Componente</a>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <h3 class="display-4 text-center">Componentes</h3>
+      {% if subcomponentes %}
+          <div class="card">
+              <div class="card-body">
+                  <table class="table">
+                      <thead>
+                          <tr>
+                              <th scope="col">Nome</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% for subcomponente in subcomponentes %}
+                              <tr>
+                                  <td><a href="{% url 'subcomponente_detail' pk=subcomponente.pk %}" style="text-decoration: none; color: inherit;">{{ subcomponente.nome }}</a></td>
+                              </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      {% else %}
+          <p class="text-center">Nenhum subcomponente encontrado.</p>
+      {% endif %}
+  </div>  
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h3 class="display-4 text-center">Reabastecer</h3>
+
+    <div class="card">
+      <div class="card-body">
+        <form method="post" id="reabastecimento-form">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary">Registrar Entrada</button>
+        </form>
+      </div>
+    </div>
+    <a href="{% url 'spare_list' %}" class="btn btn-secondary mt-3">Cancelar</a>
+  </div>
+
+  {% block extra_js %}
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.getElementById('reabastecimento-form');
+
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        Swal.fire({
+          title: 'Confirmar Reabastecimento',
+          text: "Você deseja registrar essa entrada?",
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sim, registrar!',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            form.submit();  // Envia o formulário se o usuário confirmar
+          }
+        });
+      });
+    });
+  </script>
+  {% endblock %}
+{% endblock %}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitação PM em Atraso!</title>
+</head>
+<body>
+    <p>Olá {% if solicitacao.tipo_problema == 'Mecânico' %}{{ solicitacao.equipamento.responsavel_mecanico }}{% elif solicitacao.tipo_problema == 'Eletrônico' %}{{ solicitacao.equipamento.responsavel_eletronico }}{% endif %},</p>
+    <h1>A solicitação criada pelo {{ solicitacao.autor }}, está em atraso!</h1>
+    <p>Informações sobre a solicitação:</p>
+    <ul>
+        <li>ID: {{ solicitacao.id }}</li>
+        <li>Linha: {{ solicitacao.linha }}</li>
+        <li>Área: {{ solicitacao.area }}</li>
+        <li>Criticidade: {{ solicitacao.criticidade }}</li>
+        <li>Equipamento: {{ solicitacao.equipamento }}</li>
+        <li>Componente: {{ solicitacao.componente }}</li>
+        <li>Descrição: {{ solicitacao.descricao }}</li>
+        <li>Prazo para conclusão: {{ solicitacao.calcular_data_limite|date:"d/m/Y" }}</li>
+    </ul>
+    <p>Atenciosamente,<br>Sistema de Gestão da Manutenção</p>
+</body>
+</html>

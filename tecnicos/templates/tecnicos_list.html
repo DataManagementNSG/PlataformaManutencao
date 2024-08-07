@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Técnicos
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="mb-4">
+      <h3 class="display-4 text-center">Área dos Técnicos</h3>
+    </div>
+
+    <!-- Container com Botões de Ação e Técnicos -->
+    <div class="container-fluid mt-4 border border-gray rounded shadow-lg p-4 mb-4">
+      
+      <!-- Botões de Ação -->
+      <div class="row mb-3">
+        <div class="col-md-12">
+          <div class="d-flex">
+            <a href="{% url 'tecnicos_create' %}" class="btn btn-primary me-2 mb-2">
+              <i class="bi bi-plus"></i> Adicionar Técnico
+            </a>
+            <a href="{% url 'upload_file' %}" class="btn btn-success me-2 mb-2">
+              <i class="bi bi-arrow-up-circle"></i> Upload das Preventivas
+            </a>
+            <a href="{% url 'preventiva_list' %}" class="btn btn-info me-2 mb-2">
+              <i class="bi bi-list"></i> Lista Total de Preventivas
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cartões dos Técnicos -->
+      <div class="row">
+        {% for tecnico in tecnicos %}
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title text-center">
+                  <a href="{% url 'tecnicos_detail' tecnico.pk %}" style="text-decoration: none; color: inherit;">{{ tecnico.nome }}</a>
+                </h5>
+                <p class="card-text"><strong>Email:</strong> {{ tecnico.email }}</p>
+                <p class="card-text"><strong>Centro de Trabalho:</strong> {{ tecnico.centro_trabalho_responsavel }}</p>
+                <p class="card-text"><strong>Especialidade:</strong> {{ tecnico.especialidade }}</p>
+                <div class="text-center">
+                  <a href="{% url 'preventiva_detail' pk=tecnico.pk %}" class="btn btn-primary btn-sm">Preventivas</a>
+                  <a href="{% url 'solicitacoes_por_tecnico' tecnico.pk %}" class="btn btn-success btn-sm">Cartões PM</a>
+                  <a href="{% url 'materiais_por_responsavel' tecnico.pk %}" class="btn btn-info btn-sm">Spare Parts</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-center">Nenhum técnico cadastrado.</p>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

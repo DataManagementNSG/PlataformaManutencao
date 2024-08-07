@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="display-4 text-center">Detalhes do Produto</h3>
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title"><strong>{{ object.item.nome }}</strong></h3>  
+      <p class="card-text"><strong>Categoria:</strong> {{ object.categoria }}</p>
+      <p class="card-text"><strong>Código SAP:</strong> {{ object.item.codigo_sap }}</p>
+      <p class="card-text"><strong>Descrição:</strong> {{ object.item.descricao }}</p>
+      <p class="card-text"><strong>Localização:</strong> {{ object.localizacao }}</p>
+      <p class="card-text"><strong>Quantidade:</strong> {{ object.quantidade }}</p>
+      <p class="card-text"><strong>Quantidade Mínima:</strong> {{ object.quantidade_minima }}</p>
+      {% if object.foto %}
+        <img src="{{ object.foto.url }}" alt="{{ object.item.nome }}" class="img-fluid">
+      {% else %}
+        <p>Nenhuma imagem disponível</p>
+      {% endif %}
+    </div>
+  </div>
+  
+  <div class="buttons-container mt-3">
+    <a href="{% url 'spare_update' pk=object.pk %}" class="btn btn-primary">Editar</a>
+    <a href="{% url 'spare_delete' pk=object.pk %}" class="btn btn-danger">Deletar</a>
+    <a href="{% url 'spare_list' %}" class="btn btn-secondary">Voltar</a>
+  </div>
+</div>
+{% endblock %}

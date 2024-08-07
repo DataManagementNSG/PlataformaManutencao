@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Alerta de Quantidade Mínima Atingida
+{% endblock %}
+
+{% block content %}
+
+<h1 class="text-center text-danger"><i class="bi bi-exclamation-triangle-fill"></i> Alerta de Quantidade Mínima Atingida</h1>
+
+<p class="text-danger"><i class="bi bi-exclamation-triangle-fill"></i> Caro {{ material.responsavel }},</p>
+
+<p>Por favor, realizar a RC para o Código SAP: {{ material.codigo_sap }}</p>
+
+<p>Atenciosamente,<br>Manutenção Temperado</p>
+
+{% endblock %}
