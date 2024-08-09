@@ -13,7 +13,9 @@
       <p class="card-text"><strong>Quantidade:</strong> {{ object.quantidade }}</p>
       <p class="card-text"><strong>Quantidade Mínima:</strong> {{ object.quantidade_minima }}</p>
       {% if object.foto %}
-        <img src="{{ object.foto.url }}" alt="{{ object.item.nome }}" class="img-fluid">
+        <a href="{{ object.foto.url }}" target="_blank">
+          <img src="{{ object.foto.url }}" alt="{{ object.item.nome }}" class="img-fluid img-thumbnail" style="max-width: 200px; max-height: 200px;">
+        </a>
       {% else %}
         <p>Nenhuma imagem disponível</p>
       {% endif %}

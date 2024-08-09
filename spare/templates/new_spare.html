@@ -24,6 +24,13 @@
                     </div>
                 {% endif %}
             </form>
+            <!-- Spinner HTML -->
+            <div id="spinner" class="text-center" style="display: none;">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Buscando produto...</p>
+            </div>
         </div>
     </div>
 </div>
@@ -38,6 +45,9 @@
         $('#id_codigo_sap').on('change', function() {
             var codigoSap = $(this).val();
             if (codigoSap) {
+                // Mostrar o spinner
+                $('#spinner').show();
+                
                 $.ajax({
                     url: '{% url "get_item_by_codigo_sap" %}',
                     data: {
@@ -51,7 +61,19 @@
                         } else {
                             $('#id_item').val('');
                             $('#id_item option:selected').text('Selecione um item');
+                            // Exibe uma mensagem de alerta quando o produto não for encontrado
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Produto não encontrado',
+                                text: 'Nenhum produto foi encontrado para o código SAP informado.',
+                            });
                         }
+                        // Ocultar o spinner
+                        $('#spinner').hide();
+                    },
+                    error: function() {
+                        // Ocultar o spinner em caso de erro
+                        $('#spinner').hide();
                     }
                 });
             } else {
