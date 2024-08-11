@@ -92,26 +92,47 @@ def atividade_detail(request, pk):
     preventiva = get_object_or_404(Preventiva, pk=pk)
     return render(request, 'atividade_detail.html', {'object': preventiva})
 
-def solicitacoes_por_tecnico(request, responsavel_id):
-    responsavel = get_object_or_404(Tecnicos, id=responsavel_id)
-    
-    solicitacoes = Solicitacao.objects.filter(
-        equipamento__responsavel_mecanico=responsavel
-    ) | Solicitacao.objects.filter(
-        equipamento__responsavel_eletronico=responsavel
-    )
-    
-    solicitacoes_abertas = solicitacoes.filter(data_fechamento__isnull=True)
-    solicitacoes_fechadas = solicitacoes.filter(data_fechamento__isnull=False)
-    solicitacoes_atrasadas = solicitacoes_abertas.filter(data_criacao__lt=timezone.now() - timezone.timedelta(days=7))
 
-    contexto = {
-        'responsavel': responsavel,
-        'solicitacoes': solicitacoes,
-        'count_abertas': solicitacoes_abertas.count(),
-        'count_fechadas': solicitacoes_fechadas.count(),
-        'count_atrasadas': solicitacoes_atrasadas.count(),
-    }
+class TecnicoSolicitacaoDetailView(DetailView):
+    model = Tecnicos
+    template_name = 'solicitacoes_por_tecnico.html'
+    context_object_name = 'responsavel'
 
-    return render(request, 'solicitacoes_por_tecnico.html', contexto)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        responsavel = self.object
 
+        # Filtra as solicitações com base no tipo de problema e no responsável
+        if responsavel.especialidade == 'mecanico':
+            solicitacoes = Solicitacao.objects.filter(
+                equipamento__responsavel_mecanico=responsavel,
+                tipo_problema='mecanico'
+            )
+        elif responsavel.especialidade == 'eletronico':
+            solicitacoes = Solicitacao.objects.filter(
+                equipamento__responsavel_eletronico=responsavel,
+                tipo_problema='eletronico'
+            )
+        else:
+            solicitacoes = Solicitacao.objects.none()
+
+        solicitacoes_abertas = solicitacoes.filter(data_fechamento__isnull=True)
+        solicitacoes_fechadas = solicitacoes.filter(data_fechamento__isnull=False)
+        
+        # Data atual
+        today = timezone.now().date()
+
+        # Solicitações atrasadas
+        solicitacoes_atrasadas = solicitacoes_abertas.filter(
+            data_criacao__lt=timezone.now() - timezone.timedelta(days=7)  # Ajuste conforme sua lógica
+        )
+
+        context['solicitacoes_abertas'] = solicitacoes_abertas
+        context['solicitacoes_fechadas'] = solicitacoes_fechadas
+        context['solicitacoes_atrasadas'] = solicitacoes_atrasadas
+        context['count_abertas'] = solicitacoes_abertas.count()
+        context['count_fechadas'] = solicitacoes_fechadas.count()
+        context['count_atrasadas'] = solicitacoes_atrasadas.count()
+        context['today'] = today
+
+        return context

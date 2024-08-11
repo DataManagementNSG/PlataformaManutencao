@@ -9,10 +9,11 @@ class StartScriptMiddleware:
         self.script_thread = None
 
     def __call__(self, request):
-        if not self.script_thread or not self.script_thread.is_alive():
-            self.script_thread = threading.Thread(target=self.start_script)
-            self.script_thread.daemon = True
-            self.script_thread.start()
+        if request.user.is_authenticated:  # Verifica se o usuário está autenticado
+            if not self.script_thread or not self.script_thread.is_alive():
+                self.script_thread = threading.Thread(target=self.start_script)
+                self.script_thread.daemon = True
+                self.script_thread.start()
 
         response = self.get_response(request)
         return response

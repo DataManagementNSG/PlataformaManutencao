@@ -56,7 +56,7 @@ class Solicitacao(models.Model):
         if self.criticidade.nome == 'A':
             prazo = 2  # Prazo em dias
         elif self.criticidade.nome == 'B':
-            prazo = 11  # Prazo em dias
+            prazo = 7  # Prazo em dias
         else:
             ultimo_dia_mes = (hoje.replace(day=1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
             prazo = (ultimo_dia_mes.date() - self.data_criacao.date()).days

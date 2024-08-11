@@ -5,6 +5,7 @@ from tecnicos.models import Tecnicos
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
+    setor = models.ForeignKey(Setor, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.nome

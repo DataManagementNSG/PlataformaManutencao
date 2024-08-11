@@ -1,4 +1,5 @@
 from django.contrib import admin
+from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
@@ -15,7 +16,8 @@ from preventiva.views import PreventivaFechadaListView, PreventivaDetailView, Pr
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('registro/', registro_view, name='registro'),
-    path('', login_view, name='login'),
+    path('login', login_view, name = 'login'),
+    path('', views.home, name = 'home'),
     path('logout/', logout_view, name = 'logout'),
     path('', include('tecnicos.urls')),
     path('', include('spare.urls')),

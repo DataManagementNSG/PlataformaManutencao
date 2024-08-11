@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Visão Geral
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <h3 class="display-4 text-center">
+    {% if user_sector == '2DFB' %}
+      Manutenção 2DFB
+    {% else %}
+      Manutenção Temperado
+    {% endif %}
+  </h3>
+</div>
+
+<div class="container mt-4">
+  <!-- Gráfico de Status das Preventivas -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-8 text-center">
+      <div class="chart-container mb-4" style="width: 100%; border: 2px solid #d1d1d1; padding: 20px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); background-color: #fff;">
+        <h4 class="text-center" style="font-weight: normal; margin-bottom: 20px; color: #333;">Status das Preventivas</h4>
+        <canvas id="preventivasChart" width="800" height="400"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico de Categorias Spare Parts -->
+  <div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+      <div class="chart-container mb-4" style="width: 100%; border: 2px solid #d1d1d1; padding: 20px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); background-color: #fff;">
+        <h4 class="text-center" style="font-weight: normal; margin-bottom: 20px; color: #333;">Categorias Spare Parts</h4>
+        <div class="embed-responsive embed-responsive-1by1" style="width: 100%; display: inline-block;">
+          <canvas id="categoriasChart" class="embed-responsive-item"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var ctxPreventivas = document.getElementById('preventivasChart').getContext('2d');
+    var preventivasChart = new Chart(ctxPreventivas, {
+      type: 'bar',
+      data: {
+        labels: {{ labels_preventivas|safe }},
+        datasets: [{
+          label: 'Preventivas Abertas (%)',
+          data: {{ percent_abertas|safe }},
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }, {
+          label: 'Preventivas Fechadas (%)',
+          data: {{ percent_fechadas|safe }},
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: true
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              callback: function(value) {
+                return value + '%';
+              }
+            }
+          }
+        }
+      }
+    });
+
+    var ctxCategorias = document.getElementById('categoriasChart').getContext('2d');
+    var categoriasChart = new Chart(ctxCategorias, {
+      type: 'pie',
+      data: {
+        labels: [
+          {% for categoria in dados_grafico_categorias %}
+            '{{ categoria.nome }}',
+          {% endfor %}
+        ],
+        datasets: [{
+          label: 'Distribuição por Categoria',
+          data: [
+            {% for categoria in dados_grafico_categorias %}
+              {{ categoria.quantidade }},
+            {% endfor %}
+          ],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.5)',
+            'rgba(54, 162, 235, 0.5)',
+            'rgba(255, 206, 86, 0.5)',
+            'rgba(75, 192, 192, 0.5)',
+            'rgba(153, 102, 255, 0.5)',
+            'rgba(255, 159, 64, 0.5)',
+            'rgba(255, 0, 0, 0.5)',
+            'rgba(0, 255, 0, 0.5)',
+            'rgba(0, 0, 255, 0.5)',
+            'rgba(255, 255, 0, 0.5)',
+            'rgba(0, 255, 255, 0.5)',
+            'rgba(255, 0, 255, 0.5)',
+            'rgba(128, 0, 0, 0.5)',
+            'rgba(0, 128, 128, 0.5)',
+            'rgba(128, 0, 128, 0.5)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)',
+            'rgba(255, 0, 0, 1)',
+            'rgba(0, 255, 0, 1)',
+            'rgba(0, 0, 255, 1)',
+            'rgba(255, 255, 0, 1)',
+            'rgba(0, 255, 255, 1)',
+            'rgba(255, 0, 255, 1)',
+            'rgba(128, 0, 0, 1)',
+            'rgba(0, 128, 128, 1)',
+            'rgba(128, 0, 128, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: true
+          }
+        },
+        scales: {
+          y: {
+            display: false,
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  });
+</script>
+
+{% endblock %}

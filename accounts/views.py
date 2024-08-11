@@ -30,7 +30,7 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, f"Bem-vindo, {request.user.first_name}!")
-                return redirect(reverse('spare_list'))  # Usando reverse para resolver a URL
+                return redirect(reverse('home'))  # Usando reverse para resolver a URL
             else:
                 messages.error(request, "Credenciais inválidas. Tente novamente.")
         else:

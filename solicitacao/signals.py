@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 def enviar_email_solicitacao_atrasada(sender, instance, created, **kwargs):
     if not created and instance.esta_atrasada() and not instance.esta_concluida():
         logger.info(f"Enviando e-mail para solicitação atrasada: {instance}")
-        print("Enviando e-mail para solicitação atrasada:", instance)
         subject = 'Solicitação PM em Atraso!'
         html_message = render_to_string('solicitacao_atrasada.html', {'solicitacao': instance})
         plain_message = strip_tags(html_message)
@@ -37,7 +36,5 @@ def enviar_email_solicitacao_atrasada(sender, instance, created, **kwargs):
             sent = send_mail(subject, plain_message, from_email, responsaveis, html_message=html_message)
             if sent > 0:
                 logger.info("E-mail enviado com sucesso!")
-                print("E-mail enviado com sucesso!")
             else:
                 logger.error("Falha ao enviar o e-mail.")
-                print("Falha ao enviar o e-mail.")
