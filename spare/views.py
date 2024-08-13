@@ -7,12 +7,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from .utils import generate_barcode
+from urllib.parse import urlencode
 from accounts.models import Usuario
 from .forms import UploadExcelForm
 from .models import Item
 import pandas as pd
 from django.http import JsonResponse
 from django.contrib import messages
+
 
 class MaterialListView(LoginRequiredMixin, ListView):
     model = Material
@@ -42,17 +44,22 @@ class MaterialListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['categorias'] = Categoria.objects.all()
 
+        # Recuperar e armazenar os parâmetros de busca no contexto
         context['search_item'] = self.request.GET.get('item', '')
         context['search_codigo_sap'] = self.request.GET.get('codigo_sap', '')
         context['search_categoria'] = self.request.GET.get('categoria', '')
 
+        # Armazenar parâmetros de busca e página na sessão
         self.request.session['search_item'] = context['search_item']
         self.request.session['search_codigo_sap'] = context['search_codigo_sap']
         self.request.session['search_categoria'] = context['search_categoria']
         self.request.session['page_number'] = self.request.GET.get('page', 1)
 
-        paginator = Paginator(context['materials'], self.paginate_by)
+        # Paginando os materiais
+        materials = context['materials']
+        paginator = Paginator(materials, self.paginate_by)
         page = self.request.GET.get('page', 1)
+
         try:
             materials_paginados = paginator.page(page)
         except PageNotAnInteger:
@@ -61,6 +68,7 @@ class MaterialListView(LoginRequiredMixin, ListView):
             materials_paginados = paginator.page(paginator.num_pages)
 
         context['materials'] = materials_paginados
+
         return context
     
 def import_items_from_excel(request):
@@ -170,12 +178,26 @@ class MaterialDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # Recupere os parâmetros de busca e o número da página da sessão
         search_nome = self.request.session.get('search_nome', '')
         search_codigo_sap = self.request.session.get('search_codigo_sap', '')
         search_categoria = self.request.session.get('search_categoria', '')
         page_number = self.request.session.get('page_number', 1)
 
-        context['back_url'] = f"{reverse('spare_list')}?page={page_number}&nome={search_nome}&codigo_sap={search_codigo_sap}&categoria={search_categoria}"
+        # Construa o dicionário de parâmetros de consulta
+        query_params = {
+            'page': page_number,
+            'nome': search_nome,
+            'codigo_sap': search_codigo_sap,
+            'categoria': search_categoria,
+        }
+
+        # Remova parâmetros vazios
+        query_params = {k: v for k, v in query_params.items() if v}
+
+        # Construa a URL de volta com os parâmetros de busca e o número da página
+        context['back_url'] = f"{reverse('spare_list')}?{urlencode(query_params)}"
+
         return context
 
 class MaterialUpdateView(LoginRequiredMixin, UpdateView):

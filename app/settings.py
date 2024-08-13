@@ -160,3 +160,5 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 20000

@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-4">
-  <h3 class="display-4 text-center">Detalhes do Produto</h3>
+  <h3 class="display-4 text-center">Detalhes do Material</h3>
   <div class="card">
     <div class="card-body">
       <h3 class="card-title"><strong>{{ object.item.nome }}</strong></h3>  
@@ -25,7 +25,7 @@
   <div class="buttons-container mt-3">
     <a href="{% url 'spare_update' pk=object.pk %}" class="btn btn-primary">Editar</a>
     <a href="{% url 'spare_delete' pk=object.pk %}" class="btn btn-danger">Deletar</a>
-    <a href="{% url 'spare_list' %}" class="btn btn-secondary">Voltar</a>
+    <a href="{{ back_url }}" class="btn btn-secondary">Voltar</a>
   </div>
 </div>
 {% endblock %}

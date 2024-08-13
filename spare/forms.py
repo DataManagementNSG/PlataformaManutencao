@@ -1,5 +1,5 @@
 from django import forms
-from .models import Material
+from .models import Material, Categoria
 from tecnicos.models import Tecnicos
 
 class UploadExcelForm(forms.Form):
@@ -26,7 +26,7 @@ class MaterialModelForm(forms.ModelForm):
         }
         widgets = {
             'codigo_sap': forms.TextInput(attrs={'class': 'form-control'}),
-            'item': forms.Select(attrs={'class': 'form-control'}),  # Ajustado para Select
+            'item': forms.Select(attrs={'class': 'form-control'}),
             'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
             'quantidade_minima': forms.NumberInput(attrs={'class': 'form-control'}),
             'quantidade_maxima': forms.NumberInput(attrs={'class': 'form-control'}),
@@ -47,7 +47,11 @@ class MaterialModelForm(forms.ModelForm):
         if self.request:
             user = self.request.user
             if hasattr(user, 'usuario'):
+                # Filtrando o queryset do campo 'responsavel' com base no setor do usuário
                 self.fields['responsavel'].queryset = Tecnicos.objects.filter(setor=user.usuario.setor)
+                
+                # Filtrando o queryset do campo 'categoria' com base no setor do usuário
+                self.fields['categoria'].queryset = Categoria.objects.filter(setor=user.usuario.setor)
 
     def clean_criticidade(self):
         criticidade = self.cleaned_data.get('criticidade')

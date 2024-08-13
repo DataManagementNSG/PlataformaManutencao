@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-4">
-  <h3 class="display-4 text-center">Editar Produto</h3>
+  <h3 class="display-4 text-center">Editar Material</h3>
 
   <div class="card">
     <div class="card-body">
@@ -11,7 +11,7 @@
         {{ form.as_p }}
         <div class="d-flex justify-content-between">
           <button type="submit" class="btn btn-primary">Salvar</button>
-          <a href="{% url 'spare_list' %}" class="btn btn-secondary">Cancelar</a>
+          <a href="{{ back_url }}" class="btn btn-secondary">Cancelar</a>
         </div>
       </form>
     </div>

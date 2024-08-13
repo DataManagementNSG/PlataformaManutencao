@@ -71,14 +71,14 @@
     <table class="table table-striped table-bordered table-hover w-100 mx-auto">
       <thead class="thead-dark">
         <tr>
-          <th>Nome</th>
-          <th>Código SAP</th>
-          <th>Quantidade Atual</th>
-          <th>Categoria</th>
-          <th>Criticidade</th>
-          <th>Localização</th>
-          <th>Responsável</th>
-        </tr>
+          <th style="text-align: center; vertical-align: middle;">Nome</th>
+          <th style="text-align: center; vertical-align: middle;">Código SAP</th>
+          <th style="text-align: center; vertical-align: middle;">Quantidade Atual</th>
+          <th style="text-align: center; vertical-align: middle;">Categoria</th>
+          <th style="text-align: center; vertical-align: middle;">Criticidade</th>
+          <th style="text-align: center; vertical-align: middle;">Localização</th>
+          <th style="text-align: center; vertical-align: middle;">Responsável</th>
+        </tr>        
       </thead>
     <tbody>
       {% if materials %}
@@ -117,5 +117,7 @@
     </tbody>
   </table>
 </div>
+
+{% include 'components/_pagination.html' %}
 
 {% endblock %}
