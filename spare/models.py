@@ -24,12 +24,12 @@ class Unidade(models.Model):
 
 class Item(models.Model):
     id = models.BigAutoField(primary_key=True)
-    nome = models.CharField(max_length=100, blank=True, null=True)
+    nome_sap = models.CharField(max_length=100, blank=True, null=True)
     codigo_sap = models.CharField(max_length=20, blank=True, null=True)
-    descricao = models.TextField(blank=True, null=True)
+    descricao_sap = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.nome if self.nome else "Sem Nome"
+        return self.nome_sap if self.nome_sap else "Sem Nome"
 
 class Material(models.Model):
     CRITICIDADE_CHOICES = [
@@ -38,7 +38,9 @@ class Material(models.Model):
         ('A', 'A'),
     ]
     codigo_sap = models.CharField(max_length=9, blank=True, null=True)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=False, default=1)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    apelido_linha = models.CharField(max_length=200, blank=True, null=True)
+    descricao_fornecedor = models.TextField(blank=True, null=True)
     quantidade = models.IntegerField(blank=True, null=True)
     quantidade_minima = models.IntegerField(blank=True, null=True)
     quantidade_maxima = models.IntegerField(blank=True, null=True)
@@ -60,22 +62,23 @@ class Material(models.Model):
     deletado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='materiais_deletados')
 
     def save(self, *args, **kwargs):
-        if not self.pk:  # Quando o objeto é novo
-            if 'request' in kwargs:
-                self.criado_por = kwargs.pop('request').user
-        else:
-            if 'request' in kwargs:
-                self.alterado_por = kwargs.pop('request').user
+        request = kwargs.pop('request', None)
+        if request:
+            if not self.pk:  # Novo objeto
+                self.criado_por = request.user
+            else:  # Objeto existente
+                self.alterado_por = request.user
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        if 'request' in kwargs:
-            self.deletado_por = kwargs.pop('request').user
-            self.save()
+        request = kwargs.pop('request', None)
+        if request:
+            self.deletado_por = request.user
+            self.save()  # Atualiza o campo deletado_por antes de deletar
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return self.item.nome
+        return self.item.nome_sap if self.item else 'Sem nome'
 
     def valor_total(self):
         if self.quantidade is not None and self.valor_unitario is not None:

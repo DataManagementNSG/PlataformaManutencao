@@ -3,18 +3,27 @@
 {% block content %}
 <div class="container mt-4">
     <h3 class="display-4 text-center">Cadastrar Material</h3>
+    <!-- Spinner HTML -->
+    <div id="spinner" class="text-center" style="display: none;">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Buscando produto...</p>
+    </div>
+
     <div class="card">
         <div class="card-body">
             <form id="spare-form" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
+                <input type="hidden" id="hidden_item" name="item" value="{{ form.item.value }}">
                 <button type="submit" class="btn btn-primary">Cadastrar</button>
                 <a href="{% url 'spare_list' %}" class="btn btn-secondary">Cancelar</a>
 
                 {% if form.errors %}
-                    <div class="alert alert-danger mt-3" role="alert">
+                    <div class="alert alert-danger mt-3" role="alert" id="form-errors-container">
                         <strong>Por favor, corrija os seguintes erros:</strong>
-                        <ul>
+                        <ul id="form-errors">
                             {% for field, error_list in form.errors.items %}
                                 {% for error in error_list %}
                                     <li>{{ error }}</li>
@@ -24,17 +33,9 @@
                     </div>
                 {% endif %}
             </form>
-            <!-- Spinner HTML -->
-            <div id="spinner" class="text-center" style="display: none;">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <p>Buscando produto...</p>
-            </div>
         </div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}
@@ -42,70 +43,91 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
+        // Exibe erros imediatamente ao carregar o formulário
+        function showErrors() {
+            var errors = $('#form-errors').html();
+            if (errors) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro de Validação',
+                    html: errors,
+                    showCloseButton: true,
+                });
+            }
+        }
+
+        // Chama a função showErrors ao carregar o formulário
+        showErrors();
+
         $('#id_codigo_sap').on('change', function() {
             var codigoSap = $(this).val();
             if (codigoSap) {
-                // Mostrar o spinner
                 $('#spinner').show();
-                
                 $.ajax({
                     url: '{% url "get_item_by_codigo_sap" %}',
                     data: {
                         'codigo_sap': codigoSap
                     },
                     dataType: 'json',
-                    success: function (data) {
+                    success: function(data) {
                         if (data.id) {
-                            $('#id_item').val(data.id);
-                            $('#id_item option:selected').text(data.nome);
+                            $('#id_item').val(data.id).trigger('change'); // Atualiza o campo item
+                            $('#hidden_item').val(data.id); // Atualiza o campo oculto
+                            $('#form-errors-container').hide(); // Esconde erros, se houver
                         } else {
-                            $('#id_item').val('');
-                            $('#id_item option:selected').text('Selecione um item');
-                            // Exibe uma mensagem de alerta quando o produto não for encontrado
+                            $('#id_item').val('').trigger('change');
+                            $('#hidden_item').val('');
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Produto não encontrado',
                                 text: 'Nenhum produto foi encontrado para o código SAP informado.',
                             });
                         }
-                        // Ocultar o spinner
                         $('#spinner').hide();
                     },
                     error: function() {
-                        // Ocultar o spinner em caso de erro
                         $('#spinner').hide();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro',
+                            text: 'Ocorreu um erro ao buscar o produto.',
+                        });
                     }
                 });
             } else {
-                $('#id_item').val('');
-                $('#id_item option:selected').text('Selecione um item');
+                $('#id_item').val('').trigger('change');
+                $('#hidden_item').val('');
+                $('#form-errors-container').hide(); // Esconde erros se não houver código SAP
             }
         });
 
-        document.getElementById('spare-form').addEventListener('submit', function(event) {
+        $('#spare-form').on('submit', function(event) {
             event.preventDefault();
-            Swal.fire({
-                title: 'Você tem certeza?',
-                text: "Você está prestes a cadastrar um novo produto.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sim, cadastrar!',
-                cancelButtonText: 'Não, cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Cadastrado!',
-                        text: 'O produto foi cadastrado com sucesso.',
-                        icon: 'success',
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        event.target.submit();
-                    });
-                }
-            });
+            var errors = $('#form-errors').html(); // Obtém os erros do formulário
+            if (errors) {
+                $('#form-errors-container').show(); // Exibe erros se houver
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro de Validação',
+                    html: errors, // Exibe os erros do formulário
+                    showCloseButton: true,
+                });
+            } else {
+                Swal.fire({
+                    title: 'Você tem certeza?',
+                    text: "Você está prestes a cadastrar um novo produto.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, cadastrar!',
+                    cancelButtonText: 'Não, cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        event.target.submit(); // Permite o envio do formulário
+                    }
+                });
+            }
         });
     });
 </script>

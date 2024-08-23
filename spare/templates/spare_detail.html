@@ -3,12 +3,27 @@
 {% block content %}
 <div class="container mt-4">
   <h3 class="display-4 text-center">Detalhes do Material</h3>
-  <div class="card">
+  <div class="container-fluid mt-4 border border-gray rounded shadow-lg p-4 mb-4">
     <div class="card-body">
-      <h3 class="card-title"><strong>{{ object.item.nome }}</strong></h3>  
+      <h3 class="card-title text-center"><strong>
+        {% if object.apelido_linha %}
+          {{ object.apelido_linha }}
+        {% else %}
+          {{ object.item.nome_sap }}
+        {% endif %}
+      </strong></h3>  
       <p class="card-text"><strong>Categoria:</strong> {{ object.categoria }}</p>
       <p class="card-text"><strong>Código SAP:</strong> {{ object.item.codigo_sap }}</p>
-      <p class="card-text"><strong>Descrição:</strong> {{ object.item.descricao }}</p>
+      <p class="card-text">
+        <strong>Descrição:</strong> 
+        {% if object.descricao_sap %}
+          {{ object.descricao_sap }}
+        {% elif object.descricao_fornecedor %}
+          {{ object.descricao_fornecedor }}
+        {% else %}
+          Não disponível
+        {% endif %}
+      </p>
       <p class="card-text"><strong>Localização:</strong> {{ object.localizacao }}</p>
       <p class="card-text"><strong>Quantidade:</strong> {{ object.quantidade }}</p>
       <p class="card-text"><strong>Quantidade Mínima:</strong> {{ object.quantidade_minima }}</p>
@@ -20,8 +35,7 @@
         <p>Nenhuma imagem disponível</p>
       {% endif %}
     </div>
-  </div>
-  
+</div>
   <div class="buttons-container mt-3">
     <a href="{% url 'spare_update' pk=object.pk %}" class="btn btn-primary">Editar</a>
     <a href="{% url 'spare_delete' pk=object.pk %}" class="btn btn-danger">Deletar</a>

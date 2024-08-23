@@ -1,6 +1,7 @@
 from django import forms
-from .models import Material, Categoria
+from .models import Material, Categoria, Item
 from tecnicos.models import Tecnicos
+from django.core.exceptions import ValidationError
 
 class UploadExcelForm(forms.Form):
     excel_file = forms.FileField(label='Escolha o arquivo Excel')
@@ -11,8 +12,10 @@ class MaterialModelForm(forms.ModelForm):
         exclude = ['user', 'setor', 'criado_por', 'alterado_por', 'deletado_por', 'barcode_image']
         labels = {
             'codigo_sap': 'Código SAP',
-            'item': 'Nome do Item',
-            'quantidade': 'Quantidade',
+            'item': 'Nome do Item SAP',
+            'apelido_linha': 'Nome (Linha)',
+            'descricao_fornecedor': 'Descrição Fornecedor',
+            'quantidade': 'Quantidade Atual',
             'quantidade_minima': 'Quantidade Mínima',
             'quantidade_maxima': 'Quantidade Máxima',
             'unidade': 'Unidade',
@@ -26,7 +29,9 @@ class MaterialModelForm(forms.ModelForm):
         }
         widgets = {
             'codigo_sap': forms.TextInput(attrs={'class': 'form-control'}),
-            'item': forms.Select(attrs={'class': 'form-control'}),
+            'item': forms.Select(attrs={'class': 'form-control', 'disabled': 'disabled'}),
+            'apelido_linha': forms.TextInput(attrs={'class': 'form-control'}),
+            'descricao_fornecedor': forms.TextInput(attrs={'class': 'form-control'}),
             'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
             'quantidade_minima': forms.NumberInput(attrs={'class': 'form-control'}),
             'quantidade_maxima': forms.NumberInput(attrs={'class': 'form-control'}),
@@ -58,3 +63,25 @@ class MaterialModelForm(forms.ModelForm):
         if criticidade not in ['A', 'B', 'C']:
             raise forms.ValidationError('Faça uma escolha válida. A não é uma das escolhas disponíveis.')
         return criticidade
+
+    def clean_item(self):
+        # Ignorar a validação para o campo 'item'
+        return self.cleaned_data.get('item', None)
+
+    def clean_codigo_sap(self):
+        codigo_sap = self.cleaned_data.get('codigo_sap')
+        setor = self.request.user.usuario.setor
+
+        # Verificar se o código SAP já existe no setor
+        if Material.objects.filter(codigo_sap=codigo_sap, setor=setor).exists():
+            raise ValidationError("Este código SAP já está cadastrado no setor.")
+
+        return codigo_sap
+
+    def save(self, commit=True):
+        # Garantir que o campo item esteja definido antes de salvar
+        if not self.instance.item and self.instance.codigo_sap:
+            item = Item.objects.filter(codigo_sap=self.instance.codigo_sap).first()
+            if item:
+                self.instance.item = item
+        return super().save(commit=commit)
