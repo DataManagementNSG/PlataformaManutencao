@@ -65,21 +65,27 @@ class MaterialModelForm(forms.ModelForm):
         return criticidade
 
     def clean_item(self):
-        # Ignorar a validação para o campo 'item'
-        return self.cleaned_data.get('item', None)
+        item = self.cleaned_data.get('item')
+        if not item:
+            codigo_sap = self.cleaned_data.get('codigo_sap')
+            item = Item.objects.filter(codigo_sap=codigo_sap).first()
+        if not item:
+            raise forms.ValidationError('O Nome do Item SAP é obrigatório.')
+        return item
 
     def clean_codigo_sap(self):
         codigo_sap = self.cleaned_data.get('codigo_sap')
         setor = self.request.user.usuario.setor
 
-        # Verificar se o código SAP já existe no setor
-        if Material.objects.filter(codigo_sap=codigo_sap, setor=setor).exists():
+        # Verificar se o código SAP já existe no setor, mas ignorar o registro atual
+        if Material.objects.filter(codigo_sap=codigo_sap, setor=setor).exclude(pk=self.instance.pk).exists():
             raise ValidationError("Este código SAP já está cadastrado no setor.")
 
         return codigo_sap
 
     def save(self, commit=True):
-        # Garantir que o campo item esteja definido antes de salvar
+        # Atribuir o item com base no código SAP antes de salvar
+        self.instance.item = self.cleaned_data.get('item')
         if not self.instance.item and self.instance.codigo_sap:
             item = Item.objects.filter(codigo_sap=self.instance.codigo_sap).first()
             if item:

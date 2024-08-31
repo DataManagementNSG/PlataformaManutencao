@@ -4,45 +4,128 @@
 <div class="container mt-4">
   <h3 class="display-4 text-center">Editar Material</h3>
 
+  <div id="spinner" class="text-center" style="display: none;">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Buscando produto...</p>
+  </div>
+
   <div class="card">
     <div class="card-body">
-      <form method="post" enctype="multipart/form-data" action="{% url 'spare_update' pk=object.pk %}">
+      <form id="spare-form" method="post" enctype="multipart/form-data" action="{% url 'spare_update' pk=object.pk %}">
         {% csrf_token %}
         {{ form.as_p }}
-        <div class="d-flex justify-content-between">
-          <button type="submit" class="btn btn-primary">Salvar</button>
-          <a href="{{ back_url }}" class="btn btn-secondary">Cancelar</a>
-        </div>
+        <input type="hidden" id="hidden_item" name="item" value="{{ form.item.value }}">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a href="{{ back_url }}" class="btn btn-secondary">Cancelar</a>
+
+        {% if form.errors %}
+          <div class="alert alert-danger mt-3" role="alert" id="form-errors-container">
+            <strong>Por favor, corrija os seguintes erros:</strong>
+            <ul id="form-errors">
+              {% for field, error_list in form.errors.items %}
+                {% for error in error_list %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
       </form>
     </div>
   </div>
 </div>
 
+{% endblock %}
+
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  const form = document.querySelector('form');
+  $(document).ready(function() {
+    function showErrors() {
+      var errors = $('#form-errors').html();
+      if (errors) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro de Validação',
+          html: errors,
+          showCloseButton: true,
+        });
+      }
+    }
 
-  form.addEventListener('submit', function(event) {
-    event.preventDefault();
+    showErrors();
 
-    Swal.fire({
-      title: 'Você tem certeza?',
-      text: "Você deseja salvar as alterações?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sim, salvar!',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        form.submit();
+    $('#id_codigo_sap').on('change', function() {
+      var codigoSap = $(this).val();
+      if (codigoSap) {
+        $('#spinner').show();
+        $.ajax({
+          url: '{% url "get_item_by_codigo_sap" %}',
+          data: { 'codigo_sap': codigoSap },
+          dataType: 'json',
+          success: function(data) {
+            if (data.id) {
+              $('#id_item').val(data.id).trigger('change');
+              $('#hidden_item').val(data.id);
+              $('#form-errors-container').hide();
+            } else {
+              $('#id_item').val('').trigger('change');
+              $('#hidden_item').val('');
+              Swal.fire({
+                icon: 'error',
+                title: 'Produto não encontrado',
+                text: 'Nenhum produto foi encontrado para o código SAP informado.',
+              });
+            }
+            $('#spinner').hide();
+          },
+          error: function() {
+            $('#spinner').hide();
+            Swal.fire({
+              icon: 'error',
+              title: 'Erro',
+              text: 'Ocorreu um erro ao buscar o produto.',
+            });
+          }
+        });
+      } else {
+        $('#id_item').val('').trigger('change');
+        $('#hidden_item').val('');
+        $('#form-errors-container').hide();
+      }
+    });
+
+    $('#spare-form').on('submit', function(event) {
+      event.preventDefault();
+      var errors = $('#form-errors').html();
+      if (errors) {
+        $('#form-errors-container').show();
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro de Validação',
+          html: errors,
+          showCloseButton: true,
+        });
+      } else {
+        Swal.fire({
+          title: 'Você tem certeza?',
+          text: "Você está prestes a salvar as alterações.",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sim, salvar!',
+          cancelButtonText: 'Não, cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            event.target.submit();
+          }
+        });
       }
     });
   });
-});
 </script>
-{% endblock %}
 {% endblock %}

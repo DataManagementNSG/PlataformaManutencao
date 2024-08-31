@@ -37,7 +37,7 @@ class Material(models.Model):
         ('B', 'B'),
         ('A', 'A'),
     ]
-    codigo_sap = models.CharField(max_length=9, blank=True, null=True)
+    codigo_sap = models.CharField(max_length=20, blank=True, null=True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     apelido_linha = models.CharField(max_length=200, blank=True, null=True)
     descricao_fornecedor = models.TextField(blank=True, null=True)

@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.2] - 23/08/2024
+
+## Correções
+
+- Corrigido views para importação de planilha para atualizar dados sap.
+- Corrigido atualização de itens, não estava atualizando pois a confirmação estava incorreta.
+
+
+
 ## [1.0.1] - 20/08/2024
 
 ## Correções
@@ -16,7 +25,6 @@
 - Ajuste na responsividade dos elementos na tela do usuário.
 
 
-Todas as mudanças importantes a partir da implementação do sistema serão documentadas aqui.
 
 ## [1.0.0] - 12/08/2024
 
