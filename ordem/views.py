@@ -15,6 +15,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.http import JsonResponse
 from accounts.models import Usuario
 
 
@@ -62,6 +63,18 @@ class OrdemListView(LoginRequiredMixin, ListView):
             ordem.custo_total = custo_total or 0
 
         return context
+    
+def event_list(request):
+    events = Ordem.objects.all().values('id', 'titulo', 'data')  # Ajuste conforme seus campos
+    events_list = [
+        {
+            'id': event['id'],
+            'title': event['titulo'],
+            'start': event['data'].isoformat(),  # Formato ISO para o FullCalendar
+        }
+        for event in events
+    ]
+    return JsonResponse(events_list, safe=False)
 
 class NovaOrdemCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Ordem

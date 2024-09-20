@@ -115,14 +115,14 @@ def import_items_from_excel(request):
                     # Verificar se o item já existe
                     item, created = Item.objects.get_or_create(
                         codigo_sap=codigo_sap,
-                        defaults={'nome': nome_sap, 'descricao': descricao_sap}
+                        defaults={'nome_sap': nome_sap, 'descricao_sap': descricao_sap}
                     )
 
                     if not created:
                         # Verificar se há modificações
-                        if item.nome != nome_sap or item.descricao != descricao_sap:
-                            item.nome = nome_sap
-                            item.descricao = descricao_sap
+                        if item.nome_sap != nome_sap or item.descricao_sap != descricao_sap:
+                            item.nome_sap = nome_sap
+                            item.descricao_sap = descricao_sap
                             item.save()
                             updated_count += 1
                     else:
@@ -242,13 +242,21 @@ class MaterialUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('spare_detail', kwargs={'pk': self.object.pk})
 
     def form_valid(self, form):
-        form.instance.imagem = self.request.FILES.get('imagem', None)
+        # Verifica se o barcode_image foi enviado e o define
+        barcode_image = self.request.FILES.get('barcode_image', None)
+        if barcode_image:
+            form.instance.barcode_image = barcode_image
         form.instance.alterado_por = self.request.user
-        return super().form_valid(form)
+        
+        response = super().form_valid(form)
+        
+        # Adicione prints para depuração
+        print('Item:', form.instance.item)
+        print('Barcode Image:', form.instance.barcode_image)
+        return response
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         search_nome = self.request.session.get('search_nome', '')
         search_codigo_sap = self.request.session.get('search_codigo_sap', '')
         search_categoria = self.request.session.get('search_categoria', '')
