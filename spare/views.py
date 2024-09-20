@@ -90,12 +90,15 @@ def import_items_from_excel(request):
             excel_file = request.FILES['excel_file']
             try:
                 # Verifique se o arquivo é um Excel válido
-                if not excel_file.name.endswith('.xlsx') and not excel_file.name.endswith('.xls'):
+                if not excel_file.name.endswith(('.xlsx', '.xls')):
                     messages.error(request, 'O arquivo enviado não é um arquivo Excel válido.')
                     return redirect('import_items')
 
                 # Ler o arquivo Excel
                 df = pd.read_excel(excel_file)
+
+                # Verifique o conteúdo do DataFrame
+                print(df.head())  # Verifique as primeiras linhas do arquivo Excel no console
 
                 # Verificar se as colunas necessárias estão presentes
                 required_columns = {'nome', 'codigo_sap', 'descricao'}
@@ -108,9 +111,17 @@ def import_items_from_excel(request):
 
                 # Importar dados para o modelo Item
                 for _, row in df.iterrows():
-                    codigo_sap = row['codigo_sap']
-                    nome_sap = row['nome']
-                    descricao_sap = row['descricao']
+                    codigo_sap = row.get('codigo_sap')
+                    nome_sap = row.get('nome')
+                    descricao_sap = row.get('descricao')
+
+                    # Verifique se os dados estão corretos
+                    print(f"Processando: Código SAP: {codigo_sap}, Nome: {nome_sap}, Descrição: {descricao_sap}")
+
+                    # Validar se os campos obrigatórios não estão vazios
+                    if pd.isna(codigo_sap) or pd.isna(nome_sap) or pd.isna(descricao_sap):
+                        messages.error(request, f"Linhas com dados inválidos foram encontradas e ignoradas. Verifique o arquivo.")
+                        continue
 
                     # Verificar se o item já existe
                     item, created = Item.objects.get_or_create(
@@ -125,13 +136,16 @@ def import_items_from_excel(request):
                             item.descricao_sap = descricao_sap
                             item.save()
                             updated_count += 1
+                            print(f"Item {codigo_sap} atualizado.")
                     else:
                         imported_count += 1
+                        print(f"Item {codigo_sap} importado.")
 
                 messages.success(request, f'{imported_count} itens importados e {updated_count} itens atualizados com sucesso!')
                 return redirect('spare_list')  # Redirecionar para uma lista de itens ou outra página
             except Exception as e:
                 messages.error(request, f'Ocorreu um erro ao importar o arquivo: {e}')
+                print(f"Erro: {e}")  # Verifique o erro no console
     else:
         form = UploadExcelForm()
 
