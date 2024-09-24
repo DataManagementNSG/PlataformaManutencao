@@ -7,16 +7,16 @@
   <!-- Card para o formulário -->
   <div class="card shadow-sm">
     <div class="card-body">
+      <!-- Formulário de upload de arquivo Excel -->
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        
-        <!-- Adiciona o campo de upload com estilo -->
+
+        <!-- Campo de upload com o nome correto conforme a view -->
         <div class="mb-3">
-          <label for="id_planilha" class="form-label">Selecione a base de dados SAP:</label>
-          <!-- Aplicar a classe diretamente no campo do formulário -->
-          <input type="file" id="id_planilha" name="planilha" class="form-control">
+          <label for="id_excel_file" class="form-label">Selecione a base de dados SAP:</label>
+          <input type="file" id="id_excel_file" name="excel_file" class="form-control">
         </div>
-        
+
         <!-- Botão de submit com estilo -->
         <div class="d-flex justify-content-center">
           <button type="submit" class="btn btn-primary btn-lg">Upload</button>

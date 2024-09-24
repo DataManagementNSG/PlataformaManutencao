@@ -44,7 +44,7 @@
                 <p class="card-text"><strong>Especialidade:</strong> {{ tecnico.especialidade }}</p>
                 <div class="text-center">
                   <a href="{% url 'preventiva_detail' pk=tecnico.pk %}" class="btn btn-primary btn-sm">Preventivas</a>
-                  <a href="{% url 'solicitacoes_por_tecnico' tecnico.pk %}" class="btn btn-success btn-sm">Cartões PM</a>
+                  <a href="{% url 'solicitacoes_por_tecnico' tecnico.pk %}" class="btn btn-danger btn-sm">Cartões PM</a>
                   <a href="{% url 'materiais_por_responsavel' tecnico.pk %}" class="btn btn-info btn-sm">Spare Parts</a>
                 </div>
               </div>
