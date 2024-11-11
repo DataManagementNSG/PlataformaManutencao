@@ -1,5 +1,7 @@
 {% extends "base.html" %}
-
+{% block title %}
+  Detalhes do Material
+{% endblock %}
 {% block content %}
 <div class="container mt-4">
   <h3 class="display-4 text-center">Detalhes do Material</h3>
@@ -16,10 +18,10 @@
       <p class="card-text"><strong>Código SAP:</strong> {{ object.item.codigo_sap }}</p>
       <p class="card-text">
         <strong>Descrição:</strong> 
-        {% if object.descricao_sap %}
-          {{ object.descricao_sap }}
-        {% elif object.descricao_fornecedor %}
+        {% if object.descricao_fornecedor %}
           {{ object.descricao_fornecedor }}
+        {% elif object.item.descricao_sap %}
+          {{ object.item.descricao_sap }}
         {% else %}
           Não disponível
         {% endif %}
@@ -39,6 +41,7 @@
   <div class="buttons-container mt-3">
     <a href="{% url 'spare_update' pk=object.pk %}" class="btn btn-primary">Editar</a>
     <a href="{% url 'spare_delete' pk=object.pk %}" class="btn btn-danger">Deletar</a>
+    <a href="{{ object.barcode_image.url }}" download class="btn btn-success">Código de Barras</a>
     <a href="{{ back_url }}" class="btn btn-secondary">Voltar</a>
   </div>
 </div>

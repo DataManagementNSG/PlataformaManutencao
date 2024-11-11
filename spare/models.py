@@ -5,7 +5,9 @@ from tecnicos.models import Tecnicos
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
-    setor = models.ForeignKey(Setor, on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        ordering = ['nome']
 
     def __str__(self):
         return self.nome
@@ -39,14 +41,14 @@ class Material(models.Model):
     ]
     codigo_sap = models.CharField(max_length=20, blank=True, null=True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    apelido_linha = models.CharField(max_length=200, blank=True, null=True)
+    apelido_linha = models.TextField(max_length=200, blank=True, null=True)
     descricao_fornecedor = models.TextField(blank=True, null=True)
-    quantidade = models.IntegerField(blank=True, null=True)
+    quantidade = models.IntegerField(default=0)
     quantidade_minima = models.IntegerField(blank=True, null=True)
     quantidade_maxima = models.IntegerField(blank=True, null=True)
     unidade = models.ForeignKey(Unidade, on_delete=models.CASCADE, blank=True, null=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, blank=True, null=True)
-    localizacao = models.CharField(max_length=100, blank=True, null=True)
+    localizacao = models.CharField(max_length=100, default='')
     valor_unitario = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     margem_proximo_minimo = models.IntegerField(blank=True, null=True)
     criticidade = models.CharField(max_length=10, choices=CRITICIDADE_CHOICES, blank=True, null=True)

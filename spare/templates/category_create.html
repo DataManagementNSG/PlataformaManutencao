@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}
+  Nova Categoria
+{% endblock %}
+{% block content %}
+  <div class="container mt-4">
+    <h3 class="display-4 text-center">Nova Categoria</h3>
+
+    <div class="card">
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          {% if form.errors %}
+            <div class="alert alert-danger">
+              <strong>Erro ao cadastrar categoria!</strong>
+              <ul>
+                {% for field in form %}
+                  {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+          
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </form>
+      </div>
+    </div>
+
+    <a href="{% url 'category_list' %}" class="btn btn-secondary mt-3">
+      <i class="fa fa-times-circle"></i> Cancelar
+    </a>
+  </div>
+
+  {% block extra_js %}
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.querySelector('form');
+
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        Swal.fire({
+          title: 'Confirmar Registro',
+          text: "Você deseja registrar essa categoria?",
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sim, registrar!',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            form.submit();
+          }
+        });
+      });
+    });
+  </script>
+  {% endblock %}
+{% endblock %}

@@ -2,106 +2,117 @@
 <head>
     <style>
         .navbar-nav .nav-item.active .nav-link {
-            color: white; /* cor do texto para o link ativo */
+            color: white; /* Cor do texto para o link ativo */
         }
         .navbar-nav .nav-link {
-            color: white; /* cor do texto para os links */
+            color: white; /* Cor do texto para os links */
         }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #000020;">
-      <div class="container-fluid">
-        
-          <!-- Imagem -->
-          <img src="{% static 'nsg.png' %}" alt="Brasão" class="navbar-brand-img" style="margin-right: 10px;">
-    
-          <!-- Título -->
-          <a class="navbar-brand text-dark" style="margin-right: auto;"></a>
-    
-        <!-- Botão de alternância -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuCollapse" aria-controls="menuCollapse" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-    
-        <!-- Itens da navbar -->
-        <div class="collapse navbar-collapse" id="menuCollapse">
-          <ul class="navbar-nav mx-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'home' %}">
-                <i class="bi bi-bar-chart fs-4" aria-hidden="true"></i>
-                <span class="ms-1">Visão geral</span>
-              </a>
-            </li>      
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'equipamento_list' %}">
-                <i class="bi bi-laptop fs-4" aria-hidden="true"></i>
-                <span class="ms-1">Equipamentos</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'ordem_list' %}">
-                <i class="bi bi-journal-check fs-4" aria-hidden="true"></i>
-                <span class="ms-1">Ordens de Serviço</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'solicitacao_list' %}">
-                <i class="bi bi-clipboard-check fs-4" aria-hidden="true"></i>
-                <span class="ms-1">Solicitações</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'tecnicos_list' %}">
-                <i class="bi bi-people fs-4" aria-hidden="true"></i>
-                <span class="ms-1">Técnicos</span>
-              </a>          
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'spare_list' %}">
-                <i class="bi bi-tools fs-4" aria-hidden="true"></i>
-                <span class="ms-1">Spare Parts</span>
-              </a>
-            </li>
-          </ul>
-          <!-- Item de Logout posicionado à esquerda -->
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}">
-                <i class="bi bi-box-arrow-right fs-4" aria-hidden="true"></i>
-                <span class="ms-1">{{ request.user.first_name }}</span>
-              </a>
-            </li>
-          </ul>
+        <div class="container-fluid">
+            <!-- Imagem -->
+            <img src="{% static 'nsg.png' %}" alt="Brasão" class="navbar-brand-img" style="margin-right: 10px;">
+
+            <!-- Título -->
+            <a class="navbar-brand text-dark" style="margin-right: auto;"></a>
+
+            <!-- Botão de alternância -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuCollapse" aria-controls="menuCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Itens da navbar -->
+            <div class="collapse navbar-collapse" id="menuCollapse">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="bi bi-bar-chart fs-4" aria-hidden="true"></i>
+                            <span class="ms-1">Visão geral</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'new_spare' %}">
+                            <i class="bi bi-plus-circle fs-4" aria-hidden="true"></i>
+                            <span class="ms-1">Novo Material</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'import_items' %}">
+                            <i class="bi bi-upload fs-4" aria-hidden="true"></i>
+                            <span class="ms-1">Upload SAP</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'category_list' %}">
+                            <i class="bi bi-tag fs-4" aria-hidden="true"></i>
+                            <span class="ms-1">Categorias</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'spare_list' %}">
+                            <i class="bi bi-box fs-4" aria-hidden="true"></i>
+                            <span class="ms-1">Spare Parts</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inflow_create' %}">
+                            <i class="bi bi-arrow-down-square fs-4" aria-hidden="true"></i>
+                            <span class="ms-1">Registrar Entrada</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'outflow_create' %}">
+                            <i class="bi bi-arrow-up-square fs-4" aria-hidden="true"></i>
+                            <span class="ms-1">Registrar Saída</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'outflow_create' %}">
+                            <i class="bi bi-cart-plus fs-4" aria-hidden="true"></i>
+                            <span class="ms-1">Requisição de Compra</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Item de Logout posicionado à direita -->
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">
+                        <i class="bi bi-box-arrow-right fs-4" aria-hidden="true"></i>
+                        <span class="ms-1">{{ request.user.first_name }}</span>
+                    </a>
+                </li>
+            </ul>
         </div>
-      </div>
     </nav>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var navItems = document.querySelectorAll('.navbar-nav .nav-item');
+        document.addEventListener('DOMContentLoaded', function() {
+            var navItems = document.querySelectorAll('.navbar-nav .nav-item');
 
-        navItems.forEach(function(item) {
-            item.addEventListener('click', function() {
-                // Remove a classe active de todos os itens
-                navItems.forEach(function(item) {
-                    item.classList.remove('active');
+            navItems.forEach(function(item) {
+                item.addEventListener('click', function() {
+                    // Remove a classe active de todos os itens
+                    navItems.forEach(function(item) {
+                        item.classList.remove('active');
+                    });
+
+                    // Adiciona a classe active ao item clicado
+                    this.classList.add('active');
                 });
+            });
 
-                // Adiciona a classe active ao item clicado
-                this.classList.add('active');
+            // Preserva o estado ativo ao recarregar a página
+            var currentPath = window.location.pathname;
+            navItems.forEach(function(item) {
+                var link = item.querySelector('.nav-link');
+                if (link && link.getAttribute('href') === currentPath) {
+                    item.classList.add('active');
+                }
             });
         });
-
-        // Preserva o estado ativo ao recarregar a página
-        var currentPath = window.location.pathname;
-        navItems.forEach(function(item) {
-            var link = item.querySelector('.nav-link');
-            if (link && link.getAttribute('href') === currentPath) {
-                item.classList.add('active');
-            }
-        });
-    });
     </script>
 </body>
-</html>

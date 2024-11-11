@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}
+  Categorias
+{% endblock %}
+{% block content %}
+  <div class="container mt-4">
+    <h3 class="display-4 text-center">Categorias</h3>
+
+    <a href="{% url 'category_create' %}" class="btn btn-primary mt-3">Nova Categoria</a>
+
+    <div class="mt-4">
+      <table class="table table-striped table-bordered table-hover w-100 mx-auto">
+        <thead class="thead-dark">
+          <tr>
+            <th style="text-align: center; vertical-align: middle;">Nome</th>
+          </tr>        
+        </thead>
+        <tbody>
+          {% if categorias %}
+            {% for categoria in categorias %}
+              <tr>
+                <td style="text-align: center; vertical-align: middle;">
+                  {{ categoria.nome }}
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td class="text-center" colspan="1">Nenhuma categoria encontrada.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+    {% include 'components/_pagination.html' %}
+  </div>
+{% endblock %}

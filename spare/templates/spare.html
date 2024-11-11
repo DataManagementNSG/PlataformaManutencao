@@ -12,32 +12,6 @@
     <h3 class="display-4 text-center">Spare Parts</h3>
   </div>
   
-  <!-- Botões para Interações -->
-  <div class="row mb-3">
-    <div class="col-md-12">
-      <div class="btn-group" role="group">
-        <a href="{% url 'new_spare' %}" class="btn btn-primary me-2">
-          <i class="bi bi-plus"></i> Novo Material
-        </a>
-        <a href="{% url 'inflow_create' %}" class="btn btn-success me-2">
-          <i class="bi bi-arrow-up-circle"></i> Reabastecer
-        </a>
-        <a href="{% url 'outflow_create' %}" class="btn btn-warning me-2">
-          <i class="bi bi-arrow-down-circle"></i> Registrar Saída
-        </a>
-        <a href="{% url 'spare_esgotado' %}" class="btn btn-danger me-2">
-          <i class="bi bi-x-circle"></i> Sem Estoque
-        </a>
-        <!-- Novo botão de Importação -->
-        <a href="{% url 'import_items' %}" class="btn btn-primary">
-          <i class="bi bi-upload"></i> Importar Itens
-        </a>
-      </div>
-    </div>
-  </div>
-  
-  
-  
   <!-- Filtros -->
   <div class="row mb-3">
     <div class="col-md-6">
@@ -45,11 +19,14 @@
         <div class="input-group">
           <input type="text" class="form-control" name="item" placeholder="Nome" value="{{ request.GET.item }}">
           <input type="text" class="form-control" name="codigo_sap" placeholder="Código SAP" value="{{ request.GET.codigo_sap }}">
+          <input type="text" class="form-control" name="localizacao" placeholder="Localização" value="{{ request.GET.localizacao }}">
+      
           <button type="submit" class="btn btn-primary">
             <i class="bi bi-search"></i>
           </button>
         </div>
       </form>
+      
     </div>
     <div class="col-md-6">
       <form method="get" action="{% url 'spare_list' %}">

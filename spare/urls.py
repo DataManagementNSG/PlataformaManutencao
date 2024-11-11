@@ -11,4 +11,6 @@ urlpatterns = [
     path('spare/<int:pk>/delete/', views.MaterialDeleteView.as_view(), name='spare_delete'),  # Deleção do material
     path('spare/esgotado/', views.MaterialEsgotadoView.as_view(), name='spare_esgotado'),  # Visualizar materiais esgotados
     path('get-item/', views.get_item_by_codigo_sap, name='get_item_by_codigo_sap'),
+    path('categorias/', views.CategoryListView.as_view(), name='category_list'),
+    path('categorias/criar/', views.CategoryCreateView.as_view(), name='category_create'),
 ]

@@ -30,8 +30,8 @@ class MaterialModelForm(forms.ModelForm):
         widgets = {
             'codigo_sap': forms.TextInput(attrs={'class': 'form-control'}),
             'item': forms.Select(attrs={'class': 'form-control', 'disabled': 'disabled'}),
-            'apelido_linha': forms.TextInput(attrs={'class': 'form-control'}),
-            'descricao_fornecedor': forms.TextInput(attrs={'class': 'form-control'}),
+            'apelido_linha': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'descricao_fornecedor': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
             'quantidade_minima': forms.NumberInput(attrs={'class': 'form-control'}),
             'quantidade_maxima': forms.NumberInput(attrs={'class': 'form-control'}),
@@ -56,7 +56,8 @@ class MaterialModelForm(forms.ModelForm):
                 self.fields['responsavel'].queryset = Tecnicos.objects.filter(setor=user.usuario.setor)
                 
                 # Filtrando o queryset do campo 'categoria' com base no setor do usuário
-                self.fields['categoria'].queryset = Categoria.objects.filter(setor=user.usuario.setor)
+        self.fields['categoria'].queryset = Categoria.objects.all()
+
 
     def clean_criticidade(self):
         criticidade = self.cleaned_data.get('criticidade')
@@ -91,3 +92,20 @@ class MaterialModelForm(forms.ModelForm):
             if item:
                 self.instance.item = item
         return super().save(commit=commit)
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Categoria
+        fields = ['nome']
+        labels = {
+            'nome': 'Nome da Categoria',
+        }
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def clean_nome(self):
+        nome = self.cleaned_data.get('nome')
+        if Categoria.objects.filter(nome__iexact=nome).exists():
+            raise forms.ValidationError("Essa categoria já existe. Por favor, insira um nome único.")
+        return nome

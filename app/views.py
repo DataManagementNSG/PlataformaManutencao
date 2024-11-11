@@ -58,8 +58,8 @@ def home(request):
         # Calcula a quantidade total de materiais para o setor do usuário
         total_spare_parts = Material.objects.filter(setor=setor_usuario).aggregate(total=Sum('quantidade'))['total'] or 0
 
-        # Obtém as categorias e prepara os dados para o gráfico de categorias
-        categorias = Categoria.objects.filter(setor=setor_usuario)
+        # Obtém todas as categorias sem restrição de setor e prepara os dados para o gráfico de categorias
+        categorias = Categoria.objects.all()
         dados_grafico_categorias = []
         for categoria in categorias:
             quantidade_materiais = Material.objects.filter(categoria=categoria).count()

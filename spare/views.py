@@ -1,6 +1,6 @@
 from spare.models import Material, Categoria, Criticidade
 from django.shortcuts import render, get_object_or_404, redirect
-from spare.forms import MaterialModelForm
+from spare.forms import MaterialModelForm, CategoryForm
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -25,12 +25,13 @@ class MaterialListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         usuario = get_object_or_404(Usuario, user=user)
-        materials = Material.objects.filter(setor=usuario.setor).order_by('item__nome_sap')  # Ajustado para 'item__nome'
+        materials = Material.objects.filter(setor=usuario.setor).order_by('item__nome_sap')  
 
         search_item = self.request.GET.get('item')
         search_codigo_sap = self.request.GET.get('codigo_sap')
         search_categoria = self.request.GET.get('categoria')
         search_criticidade = self.request.GET.get('criticidade')
+        search_localizacao = self.request.GET.get('localizacao')
 
         if search_item:
             materials = materials.filter(item__nome__icontains=search_item)
@@ -40,35 +41,28 @@ class MaterialListView(LoginRequiredMixin, ListView):
             materials = materials.filter(categoria__nome=search_categoria)
         if search_criticidade:
             materials = materials.filter(criticidade=search_criticidade)
+        if search_localizacao:
+            materials = materials.filter(localizacao=search_localizacao)
 
         return materials
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        usuario = get_object_or_404(Usuario, user=user)
-        setor_usuario = usuario.setor
+        context['criticidades'] = Criticidade.objects.all()
+        context['categorias'] = Categoria.objects.all()  # Todas as categorias, sem vínculo com setor
 
-        context['criticidades'] = Criticidade.objects.all()  # Adicionado para passar criticidades ao template
-
-        # Recupera categorias vinculadas ao setor do usuário
-        categorias = Categoria.objects.filter(setor=setor_usuario)
-        context['categorias'] = categorias
-
-        # Recuperar e armazenar os parâmetros de busca no contexto
+        # Armazenar os parâmetros de busca
         context['search_item'] = self.request.GET.get('item', '')
         context['search_codigo_sap'] = self.request.GET.get('codigo_sap', '')
         context['search_categoria'] = self.request.GET.get('categoria', '')
         context['search_criticidade'] = self.request.GET.get('criticidade', '')
 
-        # Armazenar parâmetros de busca e página na sessão
         self.request.session['search_item'] = context['search_item']
         self.request.session['search_codigo_sap'] = context['search_codigo_sap']
         self.request.session['search_categoria'] = context['search_categoria']
         self.request.session['search_criticidade'] = context['search_criticidade']
         self.request.session['page_number'] = self.request.GET.get('page', 1)
 
-        # Paginando os materiais
         paginator = Paginator(context['materials'], self.paginate_by)
         page = self.request.GET.get('page', 1)
 
@@ -307,3 +301,15 @@ class MaterialEsgotadoView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         materials_esgotados = Material.objects.filter(quantidade=0)
         return render(request, self.template_name, {'esgotados': materials_esgotados})
+    
+class CategoryListView(ListView):
+    model = Categoria
+    template_name = 'category_list.html'  # Template para exibir a lista
+    context_object_name = 'categorias'
+
+# Criação de nova categoria
+class CategoryCreateView(CreateView):
+    model = Categoria
+    form_class = CategoryForm  # Define o formulário com validação
+    template_name = 'category_create.html'
+    success_url = reverse_lazy('category_list')
