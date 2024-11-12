@@ -34,7 +34,7 @@ class MaterialListView(LoginRequiredMixin, ListView):
         search_localizacao = self.request.GET.get('localizacao')
 
         if search_item:
-            materials = materials.filter(item__nome__icontains=search_item)
+            materials = materials.filter(item__nome_sap__icontains=search_item)
         if search_codigo_sap:
             materials = materials.filter(codigo_sap__icontains=search_codigo_sap)
         if search_categoria:
