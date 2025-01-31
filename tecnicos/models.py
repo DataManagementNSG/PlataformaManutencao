@@ -10,5 +10,9 @@ class Tecnicos(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     setor = models.ForeignKey(Setor, on_delete=models.CASCADE, null=True, blank=True)  # Temporariamente opcional
 
+
     def __str__(self):
         return self.nome
+    
+    class Meta:
+        ordering = ['nome']  # Ordenação padrão por nome
