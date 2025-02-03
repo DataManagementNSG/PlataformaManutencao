@@ -12,6 +12,7 @@ from solicitacao.views import SolicitacaoListView, SolicitacaoCreateView, Solici
 from equipamento.views import ListView as EquipamentoListView, CreateView as EquipamentoCreateView, DetailView as EquipamentoDetailView, UpdateView as EquipamentoUpdateView, DeleteView as EquipamentoDeleteView
 from ordem.views import ListView as OrdemListView, CreateView as OrdemCreateView, DetailView as OrdemDetailView, UpdateView as OrdemUpdateView, DeleteView as OrdemDeleteView
 from preventiva.views import PreventivaFechadaListView, PreventivaDetailView, PreventivaCreateView, PreventivaUpdateView, PreventivaDeleteView, upload_file, relatorio_excel, atualizar_status_sap, materiais_por_responsavel, solicitacoes_por_tecnico
+from .views import invoke_agent, get_ai_result
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +28,8 @@ urlpatterns = [
     path('', include('equipamento.urls')),
     path('', include('ordem.urls')),
     path('', include('preventiva.urls')),
+    path('invoke-agent/', invoke_agent, name='invoke_agent'),
+    path('get-ai-result/', get_ai_result, name='get_ai_result'),
 
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

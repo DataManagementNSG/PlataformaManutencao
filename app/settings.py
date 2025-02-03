@@ -1,5 +1,11 @@
 from pathlib import Path
 import os
+from decouple import config
+
+
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +44,8 @@ INSTALLED_APPS = [
     'equipamento',
     'ordem',
     'preventiva',
+    'ai',
+
 
     'dal',
     'dal_select2',
@@ -88,11 +96,12 @@ DATABASES = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp-mail.outlook.com'
-EMAIL_PORT = 587  # Porta TLS
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'gestao.manutencao131@hotmail.com'  # Seu endereço de e-mail do Outlook/Hotmail
-EMAIL_HOST_PASSWORD = 'manut.NSG001'  # Sua senha do Outlook/Hotmail
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # Seu endereço Gmail
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Senha de Aplicativo
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -162,3 +171,6 @@ LOGGING = {
 }
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 20000
+
+OPENAI_MODEL = 'gpt-3.5-turbo'
+OPENAI_API_KEY = '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'

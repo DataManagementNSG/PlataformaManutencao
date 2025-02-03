@@ -5,10 +5,67 @@
 {% endblock %}
 
 {% block content %}
-<div class="mb-4">
-  <h3 class="display-4 text-center">
-    {{ sector_name }}
-  </h3>
-</div>
+
+  {% include 'components/_ai_result.html' %}
+
+  <style>
+    .team-layout {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px; /* Espaçamento entre os cards */
+    }
+
+    .player-card {
+      background-color: #f8f9fa;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .player-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .status.ok {
+      color: #28a745;
+    }
+
+    .status.warning {
+      color: #ffc107;
+    }
+
+    .status.danger {
+      color: #dc3545;
+    }
+  </style>
+
+  <div class="mb-4">
+    <h3 class="display-4 text-center">
+      {{ sector_name }}
+    </h3>
+  </div>
+  
+  <div class="team-layout container">
+    <div class="row">
+      {% for tecnico in tecnicos %}
+        <div class="col-md-3 mb-4"> <!-- Adicionado espaçamento vertical entre as colunas -->
+          <div class="card player-card text-center">
+            <div class="card-body">
+              <h5 class="card-title">{{ tecnico.nome }}</h5>
+              <p><span class="status ok">✔</span> Materiais OK: {{ tecnico.materiais_ok }}</p>
+              <p><span class="status warning">⚠</span> Próximo ao mínimo: {{ tecnico.materiais_proximo_min }}</p>
+              <p><span class="status danger">❌</span> No mínimo ou zerado: {{ tecnico.materiais_minimo }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
 
 {% endblock %}

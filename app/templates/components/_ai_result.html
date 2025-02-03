@@ -1,0 +1,61 @@
+<div class="accordion" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+        aria-expanded="false" aria-controls="collapseTwo">
+        AI Manutenção
+      </button>
+    </h2>
+    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <button id="invoke-agent-btn" class="btn btn-primary mb-3">Atualizar Chamado</button>
+        <div id="invoke-status" style="margin-bottom: 10px;"></div>
+        <div id="ai-result">
+          {{ ai_result|linebreaks }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("invoke-agent-btn").addEventListener("click", function () {
+      const statusDiv = document.getElementById("invoke-status");
+      const resultDiv = document.getElementById("ai-result");
+      
+      // Atualizar status enquanto processa
+      statusDiv.innerHTML = "Aguarde... Invocando o agente.";
+      
+      fetch("{% url 'invoke_agent' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}", // CSRF Token do Django
+          },
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.status === "success") {
+              statusDiv.innerHTML = `<span style="color: green;">${data.message}</span>`;
+
+              // Atualiza os registros do agente no HTML
+              fetch("{% url 'get_ai_result' %}")  // Endpoint para buscar os dados atualizados
+                .then(response => response.json())
+                .then(resultData => {
+                  if (resultData.status === "success") {
+                      resultDiv.innerHTML = resultData.result; // Exibe o resultado atualizado
+                  } else {
+                      resultDiv.innerHTML = `<span style="color: red;">Erro ao carregar resultado: ${resultData.message}</span>`;
+                  }
+                })
+                .catch(fetchError => {
+                    resultDiv.innerHTML = `<span style="color: red;">Erro ao buscar dados: ${fetchError}</span>`;
+                });
+          } else {
+              statusDiv.innerHTML = `<span style="color: red;">Erro: ${data.message}</span>`;
+          }
+      })
+      .catch(error => {
+          statusDiv.innerHTML = `<span style="color: red;">Erro inesperado: ${error}</span>`;
+      });
+  });
+</script>
