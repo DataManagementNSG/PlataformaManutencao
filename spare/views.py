@@ -178,7 +178,7 @@ class NewMaterialCreateView(LoginRequiredMixin, CreateView):
         material = self.object
 
         if material.codigo_sap:
-            barcode_image = generate_barcode(material.codigo_sap)
+            barcode_image = generate_barcode(material.codigo_sap, material.localizacao, material.item.nome_sap)
             material.barcode_image.save(f'{material.codigo_sap}.png', barcode_image)
             material.save()
         else:
