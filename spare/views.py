@@ -14,6 +14,7 @@ from .models import Item
 import pandas as pd
 from django.http import JsonResponse
 from django.contrib import messages 
+from django.http import FileResponse
 
 
 class MaterialListView(LoginRequiredMixin, ListView):
@@ -145,6 +146,15 @@ def import_items_from_excel(request):
 
     return render(request, 'import_items.html', {'form': form})
 
+def get_barcode(request, pk):
+    material = get_object_or_404(Material, pk=pk)
+
+    image_buffer = generate_barcode(material.codigo_sap, material.localizacao, material.item.nome_sap)
+
+    # image_buffer é um BytesIO
+    image_buffer.seek(0)
+    return FileResponse(image_buffer, as_attachment=True, filename='etiqueta.png')
+
 class NewMaterialCreateView(LoginRequiredMixin, CreateView):
     model = Material
     form_class = MaterialModelForm
@@ -178,8 +188,8 @@ class NewMaterialCreateView(LoginRequiredMixin, CreateView):
         material = self.object
 
         if material.codigo_sap:
-            barcode_image = generate_barcode(material.codigo_sap, material.localizacao, material.item.nome_sap)
-            material.barcode_image.save(f'{material.codigo_sap}.png', barcode_image)
+            # barcode_image = generate_barcode(material.codigo_sap, material.localizacao, material.item.nome_sap)
+            #material.barcode_image.save(f'{material.codigo_sap}.png', barcode_image)
             material.save()
         else:
             form.add_error('codigo_sap', 'Material não possui código SAP.')

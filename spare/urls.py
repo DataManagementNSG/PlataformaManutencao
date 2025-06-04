@@ -13,4 +13,5 @@ urlpatterns = [
     path('get-item/', views.get_item_by_codigo_sap, name='get_item_by_codigo_sap'),
     path('categorias/', views.CategoryListView.as_view(), name='category_list'),
     path('categorias/criar/', views.CategoryCreateView.as_view(), name='category_create'),
+    path('download-etiqueta/<int:pk>/', views.get_barcode, name='download_etiqueta'),
 ]
