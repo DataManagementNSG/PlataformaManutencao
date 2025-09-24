@@ -34,7 +34,7 @@ def generate_barcode(data, localizacao, descricao):
     logo = logo.resize((40, 20))
     etiqueta.paste(logo, (10, 10), logo)
 
-    font_title = ImageFont.truetype("arialbd.ttf", 20)
+    font_title = ImageFont.truetype("arialbd.ttf", 25)
     font_text = ImageFont.truetype("arialbd.ttf", 16)
     text1 = localizacao
     text1_size = draw.textbbox((0, 0), text1, font=font_title)
