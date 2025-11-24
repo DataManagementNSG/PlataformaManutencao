@@ -3,6 +3,8 @@ from django.urls import reverse_lazy
 from . import models, forms
 from .models import Inflow
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
+from accounts.models import Usuario  # Importa o modelo que contém o setor
 
 class InflowCreateView(LoginRequiredMixin, CreateView):
     model = models.Inflow
@@ -16,9 +18,10 @@ class InflowCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
     def form_valid(self, form):
-        form.instance.entrada_por = self.request.user  # Define o usuário logado como o responsável pela entrada
+        form.instance.user = self.request.user  # Define o usuário logado
         return super().form_valid(form)
- 
+
+
 class InflowHistoryView(LoginRequiredMixin, ListView):
     model = Inflow
     template_name = 'inflow_history.html'
@@ -26,5 +29,7 @@ class InflowHistoryView(LoginRequiredMixin, ListView):
     paginate_by = 10  # Adiciona paginação (10 registros por página)
 
     def get_queryset(self):
-        # Filtra registros do usuário logado
-        return Inflow.objects.filter(user=self.request.user).order_by('-criado_em')
+        # Recupera o setor do usuário logado
+        usuario = get_object_or_404(Usuario, user=self.request.user)
+        # Retorna todos os inflows de usuários do mesmo setor
+        return Inflow.objects.filter(user__usuario__setor=usuario.setor).order_by('-criado_em')
