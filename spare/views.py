@@ -169,33 +169,91 @@ class NewMaterialCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         usuario = Usuario.objects.get(user=self.request.user)
         setor = usuario.setor
+        codigo_sap = form.cleaned_data.get('codigo_sap')
 
+        print("===================================")
+        print("USUÁRIO:", self.request.user.username)
+        print("SETOR:", setor)
+        print("SETOR ID:", setor.id)
+        print("CÓDIGO SAP:", codigo_sap)
+
+        # Buscar todos os materiais que possuem o mesmo código SAP,
+        # independentemente do setor
+        existentes = Material.objects.filter(
+            codigo_sap=codigo_sap
+        )
+
+        if existentes.exists():
+            print("MATERIAIS EXISTENTES COM ESTE CÓDIGO SAP:")
+
+            for material in existentes:
+                print(
+                    "EXISTENTE:",
+                    "ID =", material.id,
+                    "| SAP =", material.codigo_sap,
+                    "| SETOR =", material.setor,
+                    "| SETOR ID =", material.setor_id
+                )
+        else:
+            print("NENHUM MATERIAL EXISTENTE COM ESTE CÓDIGO SAP.")
+
+        print("-----------------------------------")
+
+        # Verificar se o código SAP já existe no setor
+        # do usuário logado
+        existe_no_mesmo_setor = Material.objects.filter(
+            codigo_sap=codigo_sap,
+            setor=setor
+        ).exists()
+
+        print(
+            "JÁ EXISTE NO SETOR DO USUÁRIO?",
+            existe_no_mesmo_setor
+        )
+
+        print("===================================")
+
+        # O setor sempre será o setor do usuário logado
         form.instance.setor = setor
         form.instance.criado_por = self.request.user
         form.instance.user = self.request.user
 
+        # Localizar o Item correspondente ao código SAP
         if not form.instance.item:
-            item = Item.objects.filter(codigo_sap=form.instance.codigo_sap).first()
+            item = Item.objects.filter(
+                codigo_sap=form.instance.codigo_sap
+            ).first()
+
             if item:
                 form.instance.item = item
             else:
-                form.add_error('codigo_sap', 'Item não encontrado para o código SAP fornecido.')
+                form.add_error(
+                    'codigo_sap',
+                    'Item não encontrado para o código SAP fornecido.'
+                )
                 return self.form_invalid(form)
 
-        print(f'Item ID no form_valid: {form.instance.item}')
+        print("Item no form_valid:", form.instance.item)
 
+        # Salvar o Material
         response = super().form_valid(form)
+
         material = self.object
 
         if material.codigo_sap:
-            # barcode_image = generate_barcode(material.codigo_sap, material.localizacao, material.item.nome_sap)
-            #material.barcode_image.save(f'{material.codigo_sap}.png', barcode_image)
             material.save()
         else:
-            form.add_error('codigo_sap', 'Material não possui código SAP.')
+            form.add_error(
+                'codigo_sap',
+                'Material não possui código SAP.'
+            )
             return self.form_invalid(form)
 
         return response
+
+    def form_invalid(self, form):
+        print(f'Erros no formulário: {form.errors}')
+        return super().form_invalid(form)
 
     def form_invalid(self, form):
         print(f'Erros no formulário: {form.errors}')
